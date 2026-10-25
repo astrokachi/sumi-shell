@@ -1,0 +1,35 @@
+# Yoru 夜 — Tokyo after dark: station signage, kissaten light, rain
+# on glass. A blue-black ground, cool steel text, eki cyan for focus,
+# chōchin yellow, and the sign-pink kept for signals. Toned down from
+# neon so it stays quiet.
+mode = "dark"
+
+accent = "#6FC7CF"
+selection = "#1C2333"
+muted = "#2C3445"
+
+background = "#0B0D14"
+dark_background = "#08090E"
+darker_background = "#000000"
+lighter_background = "#131722"
+
+foreground = "#DCE1EA"
+dark_foreground = "#5F6879"
+light_foreground = "#7C8597"
+bright_foreground = "#EEF1F6"
+
+red = "#E86A8A"
+yellow = "#E9C060"
+orange = "#EB9A5E"
+green = "#86CC90"
+cyan = "#6FC7CF"
+blue = "#7EA2E8"
+magenta = "#B39AEB"
+brown = "#B0705A"
+
+bright_red = "#F08AA4"
+bright_yellow = "#F0D082"
+bright_green = "#A2D9AA"
+bright_cyan = "#91D5DB"
+bright_blue = "#9DB8EE"
+bright_magenta = "#C6B3F0"

@@ -1,0 +1,33 @@
+# Ai 藍 — indigo dye on undyed cotton. A deep kon ground, kinari text,
+# the pale kamenozoki blue for focus and akane madder for signals.
+mode = "dark"
+
+accent = "#8FB2D9"
+selection = "#22345A"
+muted = "#38476A"
+
+background = "#101829"
+dark_background = "#0C1220"
+darker_background = "#05080F"
+lighter_background = "#182339"
+
+foreground = "#E6E1D3"
+dark_foreground = "#6E7890"
+light_foreground = "#8A93A6"
+bright_foreground = "#F1EDE3"
+
+red = "#E0715A"
+yellow = "#D9B26F"
+orange = "#E39A5C"
+green = "#9DB884"
+cyan = "#7FB8B4"
+blue = "#8FB2D9"
+magenta = "#B49BC8"
+brown = "#A0674A"
+
+bright_red = "#EA8E7B"
+bright_yellow = "#E5C78F"
+bright_green = "#B5CB9F"
+bright_cyan = "#9CCAC6"
+bright_blue = "#AAC5E4"
+bright_magenta = "#C6B2D6"

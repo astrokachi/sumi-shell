@@ -52,9 +52,12 @@ if [[ -f $hyprland_lua ]] && grep -q 'require("hypr.sumi")' "$hyprland_lua"; the
   run sed -i '/^require("hypr\.sumi")$/d' "$hyprland_lua"
 fi
 if $purge; then
-  [[ $(omarchy theme current 2>/dev/null | tr '[:upper:]' '[:lower:]') == sumi ]] &&
-    say "  The Sumi theme is in use; pick another first (omarchy theme set <name>)." ||
-    run rm -rf "$config/omarchy/themes/sumi" "$config/omarchy/backgrounds/sumi"
+  current=$(omarchy theme current 2>/dev/null | tr '[:upper:]' '[:lower:]' | tr -d ' -')
+  for theme in sumi andon ai ukiyoe urushi raku yoru; do
+    [[ $current == "$theme" ]] &&
+      say "  The $theme theme is in use; pick another first (omarchy theme set <name>)." ||
+      run rm -rf "$config/omarchy/themes/$theme" "$config/omarchy/backgrounds/$theme"
+  done
   run rm -rf "$HOME/.local/share/fonts/inter" "$HOME/.local/share/fonts/zen-kaku-gothic-new"
 fi
 run fc-cache -f >/dev/null

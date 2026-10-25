@@ -30,5 +30,7 @@ with each family.
 ## Wallpapers
 
 Every wallpaper is public domain, CC0, CC BY or CC BY-SA. The author, licence
-and source of each are in `theme/sumi/WALLPAPER-CREDITS.tsv`; keep that file
-with the images when sharing them.
+and source of each are in its theme's `theme/<name>/WALLPAPER-CREDITS.tsv`;
+keep that file with the images when sharing them. The wallpapers are cropped
+and colour-graded into their theme's palette; the originals are at the
+sources listed.

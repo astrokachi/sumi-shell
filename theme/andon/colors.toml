@@ -1,0 +1,34 @@
+# Andon 行灯 — washi taken into the night: paper lit from inside a
+# lantern. Warm near-black, unbleached-paper text, lantern light for
+# focus and shu red for signals.
+mode = "dark"
+
+accent = "#E9CF9E"
+selection = "#352D24"
+muted = "#4A4137"
+
+background = "#1B1814"
+dark_background = "#15120F"
+darker_background = "#0E0B09"
+lighter_background = "#26211C"
+
+foreground = "#E8DFCE"
+dark_foreground = "#71685B"
+light_foreground = "#A69C8B"
+bright_foreground = "#F3ECDE"
+
+red = "#D0553F"
+yellow = "#DDB46A"
+orange = "#DF9150"
+green = "#A7AB6C"
+cyan = "#88B1A8"
+blue = "#8FA6BC"
+magenta = "#B494AC"
+brown = "#9A5B38"
+
+bright_red = "#DE7563"
+bright_yellow = "#E8C88C"
+bright_green = "#BBBF86"
+bright_cyan = "#A2C4BC"
+bright_blue = "#A9BCCE"
+bright_magenta = "#C7ABC0"

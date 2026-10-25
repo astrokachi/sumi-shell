@@ -33,8 +33,9 @@ shell at the end. Add `--dry-run` to see what it would change first.
 - **Hyprland:** `~/.config/hypr/sumi.lua`, plus one line in `hyprland.lua`,
   `require("hypr.sumi")`, right after `require("hypr.looknfeel")`.
 - **Keybindings viewer:** `~/.local/bin/sumi-keybindings` (Super+K).
-- **Theme and wallpapers:** `~/.config/omarchy/themes/sumi` and
-  `~/.config/omarchy/backgrounds/sumi`.
+- **Themes and wallpapers:** Sumi and six companions (below), each in
+  `~/.config/omarchy/themes/<name>` with its extra wallpapers in
+  `~/.config/omarchy/backgrounds/<name>`.
 - **Fonts:** `~/.local/share/fonts/{inter,zen-kaku-gothic-new}`, plus
   `~/.config/fontconfig/conf.d/60-sumi-sans.conf`.
 - **Preferences:** the interface font becomes Inter 11, and Japanese text uses
@@ -44,6 +45,23 @@ Anything it replaces goes to `~/.local/state/sumi/backup-<time>/`, and
 `~/.local/state/sumi/install.json` records the install. Running it again
 updates in place. A machine still on the pre-0.1 `astrokachi.*` plugins is
 migrated to `sumi.*` automatically.
+
+## Themes
+
+Sumi comes with six more dark Japanese themes. Each is an ordinary Omarchy
+theme, so the shell, terminal, editor and the rest follow it; pick one with
+`omarchy theme set <name>` or the theme picker. Every theme has at least ten
+wallpapers, graded into its palette.
+
+| Theme | Idea | Focus | Signal |
+|---|---|---|---|
+| `sumi` 墨 | ground ink, editorial greys | light ink | shu red |
+| `andon` 行灯 | washi lit from inside a lantern at night | lantern light | shu red |
+| `ai` 藍 | indigo dye on undyed cotton | kamenozoki blue | akane madder |
+| `ukiyoe` 浮世絵 | the night print: Prussian blue, keylines on every edge | bero-ai | vermilion |
+| `urushi` 漆 | black lacquer, gold-leaf hairlines | kin gold | lacquer red |
+| `raku` 楽 | a tea bowl: clay, charcoal, matcha, kintsugi gold | matcha | bengara |
+| `yoru` 夜 | Tokyo after dark, kept quiet | station cyan | sign pink |
 
 ## Uninstall
 
@@ -124,8 +142,9 @@ omarchy-shell shell summon omarchy.menu '{"menu":"root"}'   # the command menu (
 plugins/sumi.*      the shell plugins (Omarchy's plugin format)
 hypr/sumi.lua       Hyprland settings: borders, blur, overlay timing, shortcuts
 bin/                sumi-keybindings
-theme/sumi          the Omarchy theme
-backgrounds/sumi    extra wallpapers (credits in theme/sumi/WALLPAPER-CREDITS.tsv)
+theme/<name>        the Omarchy themes, each with WALLPAPER-CREDITS.tsv
+backgrounds/<name>  each theme's extra wallpapers
+tools/              grade-wallpaper.sh: crops a picture to 2560×1440 and grades it into a theme
 fonts/, fontconfig/ Inter, Zen Kaku Gothic New, and the rule that makes them the defaults
 install.sh, uninstall.sh
 ```

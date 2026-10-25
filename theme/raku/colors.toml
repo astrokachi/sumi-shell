@@ -1,0 +1,34 @@
+# Raku 楽 — wabi-sabi in a tea bowl. Clay and charcoal, shino-white
+# text, matcha for focus, kintsugi gold where things are mended and
+# bengara red for signals.
+mode = "dark"
+
+accent = "#8FA05A"
+selection = "#3D3530"
+muted = "#51473F"
+
+background = "#2A2420"
+dark_background = "#221D1A"
+darker_background = "#0F0C0A"
+lighter_background = "#332B26"
+
+foreground = "#E4DACB"
+dark_foreground = "#857A6C"
+light_foreground = "#988C7C"
+bright_foreground = "#F0E8DC"
+
+red = "#D07150"
+yellow = "#D4B06A"
+orange = "#D8925A"
+green = "#A9BA70"
+cyan = "#8EAC9E"
+blue = "#8AA0AE"
+magenta = "#B9939B"
+brown = "#A8503A"
+
+bright_red = "#DC8C70"
+bright_yellow = "#E0C48C"
+bright_green = "#BCCA8C"
+bright_cyan = "#A8C0B4"
+bright_blue = "#A4B6C2"
+bright_magenta = "#CAAAB1"

@@ -6,6 +6,23 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ## Unreleased
 
+### Themes
+
+- **Six more dark Japanese themes**, from the directions canvas: `andon`
+  行灯 (washi lit by a lantern), `ai` 藍 (indigo dye), `ukiyoe` 浮世絵 (the
+  night print), `urushi` 漆 (black lacquer and gold), `raku` 楽 (a tea bowl)
+  and `yoru` 夜 (Tokyo after dark). Each is a full Omarchy theme
+  (`colors.toml`, a `shell.toml` made from Sumi's hand-edited one, and a
+  preview). Ukiyo-e draws solid Prussian-blue keylines on popups and menus,
+  Urushi gold hairlines, Yoru faint cyan ones; the rest keep Sumi's
+  hairlines. Yoru's canvas palette was neon; its accents are toned down.
+- **11–13 wallpapers per theme** (73 in all), public domain, CC0, CC BY or
+  CC BY-SA, each credited in `theme/<name>/WALLPAPER-CREDITS.tsv`. They're
+  cropped to 2560×1440 and graded into their theme's palette with
+  `tools/grade-wallpaper.sh`, so each set reads as one.
+- `install.sh` places every theme in `theme/` with its wallpapers;
+  `uninstall.sh --purge` removes all seven.
+
 ### Motion
 
 - **Springs, in Apple's terms.** `SumiSpring` (in `sumi.notch`) takes a

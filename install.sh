@@ -89,8 +89,13 @@ place "$repo/bin/sumi-keybindings" "$HOME/.local/bin/sumi-keybindings"
 place "$repo/hypr/sumi.lua" "$config/hypr/sumi.lua"
 
 say "Theme, wallpapers, fonts"
-place_copy "$repo/theme/sumi" "$config/omarchy/themes/sumi"
-place_copy "$repo/backgrounds/sumi" "$config/omarchy/backgrounds/sumi"
+# Sumi and its six Japanese companions, each with its wallpapers.
+for theme in "$repo"/theme/*/; do
+  theme=$(basename "$theme")
+  place_copy "$repo/theme/$theme" "$config/omarchy/themes/$theme"
+  [[ -d $repo/backgrounds/$theme ]] &&
+    place_copy "$repo/backgrounds/$theme" "$config/omarchy/backgrounds/$theme"
+done
 for family in "$repo"/fonts/*/; do
   family=${family%/}
   place_copy "$family" "$HOME/.local/share/fonts/$(basename "$family")"
