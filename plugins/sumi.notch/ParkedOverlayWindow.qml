@@ -29,37 +29,26 @@ PanelWindow {
     return Quickshell.screens.length > 0 ? Quickshell.screens[0] : null
   }
 
-  // A short fade with a slight settle in, and a quicker fade out, so opening
-  // and closing don't cut. Input and focus follow `shown` at once; only the
-  // drawing eases. Off with Hyprland's animations (Style.duration).
+  // Opening settles in on a gentle spring; closing fades out quicker, with no
+  // bounce. Input and focus follow `shown` at once; only the drawing moves.
+  // Off with Hyprland's animations (Style.duration).
   property bool animateReveal: true
   // Where the settle grows from: the trigger for a dropdown, the middle for
   // a dialog.
   property int revealOrigin: Item.Center
-  property real reveal: 0
+  readonly property real reveal: revealSpring.value
   SumiTokens { id: motion }
-  NumberAnimation {
-    id: revealAnim
-    target: window
-    property: "reveal"
-    easing.type: Easing.BezierSpline
-    easing.bezierCurve: motion.easeOut
+  SumiSpring {
+    id: revealSpring
+    animated: window.animateReveal && Commons.Style.duration(1) > 0
+    response: window.shown ? motion.openResponse : motion.closeResponse
+    dampingRatio: window.shown ? motion.openDamping : motion.closeDamping
+    target: window.shown ? 1 : 0
   }
 
   // Follow focus at open. Only a monitor change re-creates the surface; on
   // the same monitor this assignment is a no-op.
-  onShownChanged: {
-    if (shown) targetScreen = focusedScreen()
-    revealAnim.stop()
-    if (!animateReveal) {
-      reveal = shown ? 1 : 0
-      return
-    }
-    // From wherever it is, so reopening mid-close turns around smoothly.
-    revealAnim.to = shown ? 1 : 0
-    revealAnim.duration = Commons.Style.duration(shown ? motion.openMs : motion.closeMs)
-    revealAnim.start()
-  }
+  onShownChanged: if (shown) targetScreen = focusedScreen()
 
   Connections {
     target: Quickshell
@@ -81,7 +70,7 @@ PanelWindow {
   // blurred layer wherever what is under it changes, even a transparent one,
   // and four parked fullscreen layers halved the frame rate (30 FPS over
   // video). Opening grows it back; that is a resize, not a new surface.
-  readonly property bool parked: !shown && reveal === 0
+  readonly property bool parked: !shown && reveal <= 0 && !revealSpring.moving
   anchors { top: true; left: true; bottom: !parked; right: !parked }
   implicitWidth: 1
   implicitHeight: 1
@@ -100,12 +89,13 @@ PanelWindow {
   Binding {
     target: window.contentItem
     property: "opacity"
-    value: window.reveal
+    // Opaque well before the settle ends, so it reads as arriving, not fading.
+    value: Math.max(0, Math.min(1, window.reveal / motion.opaqueAt))
   }
   Binding {
     target: window.contentItem
     property: "scale"
-    value: 0.98 + 0.02 * window.reveal
+    value: motion.settleFrom + (1 - motion.settleFrom) * window.reveal
   }
   Binding {
     target: window.contentItem

@@ -6,7 +6,39 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ## Unreleased
 
-Nothing yet.
+### Motion
+
+- **Springs, in Apple's terms.** `SumiSpring` (in `sumi.notch`) takes a
+  response (seconds) and a damping ratio. It moves on from wherever it is at
+  whatever speed it has, so reopening something while it closes turns around
+  smoothly instead of jumping. It only draws frames while moving, and jumps
+  when Hyprland's animations are off.
+- **Surfaces settle in on a gentle spring.** The control center, launcher,
+  command menu and notch controls open with response 0.38 s and damping 0.75:
+  about 90% there in 180 ms, a ~1.5% overshoot, then a soft settle, scaling
+  from 0.95 at the point they hang from. They close critically damped
+  (0.24 s, no bounce) and quicker. Each is fully opaque about a third of the
+  way in, so it is there at once and the spring shapes the settle.
+- **Control center sections open on springs**: widen, then the body drops a
+  beat later; the reverse on close. The battery's power modes are open in
+  about 280 ms. Their height shows the spring's overshoot; their width never
+  passes the panel's edge.
+- **The notch's width, the controls card's height and its tab marker** move
+  on springs too. The motion values live in `SumiTokens` (`openResponse`,
+  `openDamping`, `closeResponse`, `closeDamping`, `settleFrom`, `opaqueAt`).
+
+### Fixes
+
+- **The control center opens where it hangs.** Growing back from its parked
+  1×1, Hyprland animated the resize, so it swept in from the screen's corner.
+  `hypr/sumi.lua` now turns Hyprland's animation off for `sumi-cc` and
+  `sumi-control`, as Omarchy already does for its menu and pickers; the
+  shell draws the motion itself.
+- **The notch controls no longer shake after opening.** The notch's width ran
+  on a spring with damping 0.36, which overshot by ~30% and rang for half a
+  second after any hover change, and the card followed the notch's moving
+  geometry. The notch now springs at damping 0.82 without ringing, and the
+  card centres on the bar.
 
 ## 0.1.0 (2026-10-25)
 
@@ -102,8 +134,9 @@ Measured on an HP laptop with Intel UHD 620, Omarchy 4.5.0rc1, Hyprland 0.56.2.
   on screen stays put while it fades out.
 - **Control center sections open in about 260 ms** (were about 600 ms). The
   widening and the drop now overlap, and the scroll after is shorter.
-- **Overlays Hyprland animates** (clipboard, emojis, notifications) use the
-  same 160 / 120 ms on the same curve (were 400 ms in).
+- **Overlays Hyprland animates** (notifications, polkit prompts) use the
+  same 160 / 120 ms on the same curve (were 400 ms in). Omarchy already
+  turns Hyprland's animation off for its menu, pickers, emojis and clipboard.
 - Motion lives in `SumiTokens` (`openMs`, `closeMs`, `easeOut`) and goes
   through `Style.duration()`, so turning off Hyprland's animations turns it
   off too.

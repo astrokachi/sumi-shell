@@ -35,11 +35,17 @@ Item {
     return Math.max(restWidth, content) + (hover.hovered && !expanded ? Style.space(6) : 0)
   }
 
-  width: targetWidth
+  // Eases between widths on a spring that settles without ringing. The old
+  // one (damping 0.36) overshot by ~30% and wobbled for half a second after
+  // every hover, shaking whatever hung under the notch.
+  width: widthSpring.value
   height: host.barSize
-
-  Behavior on width {
-    SpringAnimation { spring: 4.2; damping: 0.36; epsilon: 0.25 }
+  SumiSpring {
+    id: widthSpring
+    animated: Style.duration(1) > 0
+    response: 0.38
+    dampingRatio: 0.82
+    target: notch.targetWidth
   }
 
   onExpandedChanged: {

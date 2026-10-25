@@ -85,10 +85,6 @@ PanelWindow {
   }
 
   onWantedChanged: {
-    revealAnim.stop()
-    revealAnim.to = wanted ? 1 : 0
-    revealAnim.duration = Style.duration(wanted ? ds.openMs : ds.closeMs)
-    revealAnim.start()
     if (wanted) {
       host.resolveServices()
       refreshAfterOpen.restart()
@@ -98,20 +94,20 @@ PanelWindow {
     }
   }
 
-  // A short fade with a slight settle from the status glyphs it hangs under,
-  // and a quicker fade out. Input and focus follow `wanted` at once.
-  property real appear: 0
-  NumberAnimation {
-    id: revealAnim
-    target: cc
-    property: "appear"
-    easing.type: Easing.BezierSpline
-    easing.bezierCurve: cc.ds.easeOut
+  // Settles in from the status glyphs it hangs under on a gentle spring, and
+  // leaves quicker with no bounce. Input and focus follow `wanted` at once.
+  readonly property real appear: appearSpring.value
+  SumiSpring {
+    id: appearSpring
+    animated: Style.duration(1) > 0
+    response: cc.wanted ? cc.ds.openResponse : cc.ds.closeResponse
+    dampingRatio: cc.wanted ? cc.ds.openDamping : cc.ds.closeDamping
+    target: cc.wanted ? 1 : 0
   }
 
   // Fully faded out: only now put the open part away, so the panel leaves
   // showing what it showed rather than snapping shut mid-fade.
-  readonly property bool settledClosed: !wanted && appear === 0
+  readonly property bool settledClosed: !wanted && appear <= 0 && !appearSpring.moving
   onSettledClosedChanged: {
     if (!settledClosed) return
     open = ""
@@ -151,12 +147,12 @@ PanelWindow {
   Binding {
     target: cc.contentItem
     property: "opacity"
-    value: cc.appear
+    value: Math.max(0, Math.min(1, cc.appear / cc.ds.opaqueAt))
   }
   Binding {
     target: cc.contentItem
     property: "scale"
-    value: 0.98 + 0.02 * cc.appear
+    value: cc.ds.settleFrom + (1 - cc.ds.settleFrom) * cc.appear
   }
   Binding {
     target: cc.contentItem
@@ -1344,8 +1340,8 @@ PanelWindow {
     default property alias content: foldBody.data
 
     readonly property bool shares: restWidth >= 0
-    property real grow: 0
-    property real drop: 0
+    readonly property real grow: growSpring.value
+    readonly property real drop: dropSpring.value
     // Eased, so moving between parts of an open fold resizes smoothly.
     property real bodyHeight: foldBody.implicitHeight
     Behavior on bodyHeight {
@@ -1354,12 +1350,24 @@ PanelWindow {
     }
 
     onPartChanged: if (part !== "") shownPart = part
+    // A part that shares its row widens first and its body drops a beat
+    // later; closing lifts the body first, then narrows. Both on springs, so
+    // a part opened and closed in quick succession turns around smoothly.
     onOpenChanged: {
-      if (open) { closing.stop(); opening.start() }
-      else { opening.stop(); closing.start() }
+      stagger.stop()
+      if (open) {
+        if (shares) { growSpring.target = 1; stagger.interval = 60; stagger.start() }
+        else { growSpring.snap(1); dropSpring.target = 1 }
+      } else {
+        dropSpring.target = 0
+        if (shares) { stagger.interval = 40; stagger.start() }
+        else growSpring.snap(0)
+      }
     }
 
-    width: shares ? restWidth + (body.width - restWidth) * grow : body.width
+    // The spring may overshoot a touch: let the height show it, never the
+    // width, which would poke past the panel's edge.
+    width: shares ? Math.min(body.width, restWidth + (body.width - restWidth) * grow) : body.width
     height: headHeight + drop * (bodyHeight + Style.space(1))
     // The corners swell a little mid-flow and settle, like a drop spreading.
     radius: cc.ds.rTile + (shares ? Math.sin(grow * Math.PI) * cc.ds.rTile * 0.5 : 0)
@@ -1367,25 +1375,25 @@ PanelWindow {
     color: !quietWhenClosed ? cc.raised
       : Qt.rgba(cc.raised.r, cc.raised.g, cc.raised.b, cc.raised.a * Math.max(grow, hovered ? 1 : 0))
 
-    // Widening and dropping overlap rather than run back to back: a part that
-    // shares its row (the battery's power modes) took ~380 ms to open, plus
-    // the scroll after. Now ~260 ms open, ~200 ms closed.
-    ParallelAnimation {
-      id: opening
-      NumberAnimation { target: fold; property: "grow"; to: 1; duration: Style.duration(fold.shares ? 200 : 0); easing.type: Easing.OutQuart }
-      SequentialAnimation {
-        PauseAnimation { duration: Style.duration(fold.shares ? 60 : 0) }
-        NumberAnimation { target: fold; property: "drop"; to: 1; duration: Style.duration(200); easing.type: Easing.OutCubic }
-      }
-      onFinished: cc.reveal(fold)
+    SumiSpring {
+      id: growSpring
+      animated: Style.duration(1) > 0
+      response: fold.open ? 0.34 : 0.26
+      dampingRatio: fold.open ? 0.84 : 1
     }
-
-    ParallelAnimation {
-      id: closing
-      NumberAnimation { target: fold; property: "drop"; to: 0; duration: Style.duration(140); easing.type: Easing.InOutCubic }
-      SequentialAnimation {
-        PauseAnimation { duration: Style.duration(fold.shares ? 40 : 0) }
-        NumberAnimation { target: fold; property: "grow"; to: 0; duration: Style.duration(fold.shares ? 160 : 0); easing.type: Easing.OutQuart }
+    SumiSpring {
+      id: dropSpring
+      animated: Style.duration(1) > 0
+      response: fold.open ? 0.36 : cc.ds.closeResponse
+      dampingRatio: fold.open ? 0.8 : cc.ds.closeDamping
+      // Settled open: bring the part into view.
+      onMovingChanged: if (!moving && fold.open) cc.reveal(fold)
+    }
+    Timer {
+      id: stagger
+      onTriggered: {
+        if (fold.open) dropSpring.target = 1
+        else growSpring.target = 0
       }
     }
 
@@ -1395,10 +1403,9 @@ PanelWindow {
       target: cc
       function onSettledClosedChanged() {
         if (!cc.settledClosed) return
-        opening.stop()
-        closing.stop()
-        fold.grow = 0
-        fold.drop = 0
+        stagger.stop()
+        growSpring.snap(0)
+        dropSpring.snap(0)
       }
     }
 

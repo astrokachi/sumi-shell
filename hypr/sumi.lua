@@ -38,9 +38,10 @@ hl.config({
 	},
 })
 
--- Shell overlays Hyprland animates (clipboard, emojis, notifications, ...)
--- open in 160 ms and close in 120 ms, the same as the surfaces Sumi animates
--- itself (SumiTokens openMs / closeMs), on the same curve (SumiTokens easeOut).
+-- Overlays Hyprland still animates (notifications, polkit prompts, ...) open
+-- in 160 ms and close in 120 ms on Sumi's ease-out curve. Omarchy switches
+-- Hyprland's animation off for its menu, pickers, emojis and clipboard, and
+-- Sumi's own surfaces animate themselves (below).
 hl.curve("sumiEaseOut", { type = "bezier", points = { { 0.23, 1 }, { 0.32, 1 } } })
 hl.animation({ leaf = "layersIn", enabled = true, speed = 1.6, bezier = "sumiEaseOut", style = "fade" })
 hl.animation({ leaf = "layersOut", enabled = true, speed = 1.2, bezier = "sumiEaseOut", style = "fade" })
@@ -68,6 +69,15 @@ hl.layer_rule({
 	},
 	blur = true,
 	ignore_alpha = 0.3,
+})
+
+-- Sumi's control center, launcher and notch controls draw their own spring,
+-- and the parked ones grow from one pixel when they open: Hyprland animating
+-- that resize too made them start from the screen's corner.
+hl.layer_rule({
+	match = { namespace = "^(sumi-cc|sumi-control)$" },
+	no_anim = true,
+	animation = "none",
 })
 
 -- The keybindings list through Sumi's faster copy of Omarchy's viewer.

@@ -57,8 +57,20 @@ PanelWindow {
     return Math.max(Style.space(140), Math.min(maxCardHeight, natural))
   }
 
+  // Settles in from the notch on a gentle spring and leaves quicker with no
+  // bounce; the window stays up until it has faded out.
+  readonly property var ds: host.ds
+  readonly property real appear: appearSpring.value
+  SumiSpring {
+    id: appearSpring
+    animated: Style.duration(1) > 0
+    response: ctl.wanted ? ctl.ds.openResponse : ctl.ds.closeResponse
+    dampingRatio: ctl.wanted ? ctl.ds.openDamping : ctl.ds.closeDamping
+    target: ctl.wanted ? 1 : 0
+  }
+
   screen: bar.screen
-  visible: wanted
+  visible: wanted || appear > 0 || appearSpring.moving
   anchors { top: true; bottom: true; left: true; right: true }
   exclusionMode: ExclusionMode.Ignore
   color: "transparent"
@@ -291,16 +303,21 @@ PanelWindow {
     id: surface
     // Hangs under the notch, at the middle of the bar.
     width: ctl.cardWidth
-    height: ctl.cardHeight
-    Behavior on height { enabled: ctl.visible; NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
-    // mapToItem() alone tracks only the notch's width: also re-read it when
-    // the notch moves (the bar window sizing up after startup) or the panel
-    // opens, and keep the card on screen.
-    x: {
-      ctl.wanted; ctl.width; ctl.anchorItem.x
-      var center = ctl.anchorItem.mapToItem(null, ctl.anchorItem.width / 2, 0).x
-      return Math.max(Style.space(8), Math.min(ctl.width - width - Style.space(8), Math.round(center - width / 2)))
+    // Follows the page's height on a spring; while closed it just jumps.
+    height: heightSpring.value
+    SumiSpring {
+      id: heightSpring
+      animated: Style.duration(1) > 0 && ctl.wanted
+      response: 0.32
+      dampingRatio: 0.86
+      target: ctl.cardHeight
     }
+    // Centred on the bar, as the notch is. Following the notch's own moving
+    // geometry made the card shake whenever the notch's width eased.
+    x: Math.max(Style.space(8), Math.round((ctl.width - width) / 2))
+    opacity: Math.max(0, Math.min(1, ctl.appear / ctl.ds.opaqueAt))
+    scale: ctl.ds.settleFrom + (1 - ctl.ds.settleFrom) * ctl.appear
+    transformOrigin: Item.Top
     y: ctl.host.barSize + Style.space(6)
     radius: Style.space(14)
     color: ctl.paper
@@ -389,14 +406,23 @@ PanelWindow {
         color: ctl.wash
 
         Rectangle {
+          id: tabMarker
           readonly property int index: Math.max(0, ctl.tabs.map(function(tab) { return tab.id }).indexOf(ctl.tab))
-          x: Style.space(2) + index * (parent.width - Style.space(4)) / ctl.tabs.length
+          readonly property real slot: (parent.width - Style.space(4)) / ctl.tabs.length
+          // Slides to the chosen tab on a spring.
+          x: tabSpring.value
+          SumiSpring {
+            id: tabSpring
+            animated: Style.duration(1) > 0
+            response: 0.3
+            dampingRatio: 0.84
+            target: Style.space(2) + tabMarker.index * tabMarker.slot
+          }
           y: Style.space(2)
-          width: (parent.width - Style.space(4)) / ctl.tabs.length
+          width: slot
           height: parent.height - Style.space(4)
           radius: Style.space(6)
           color: Qt.rgba(ctl.ink.r, ctl.ink.g, ctl.ink.b, 0.14)
-          Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
         }
 
         Row {

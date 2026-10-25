@@ -51,4 +51,16 @@ QtObject {
   // A strong ease-out for things arriving or leaving: quick at the start,
   // where the eye is, then settling. For Easing.BezierSpline.
   readonly property var easeOut: [0.23, 1, 0.32, 1, 1, 1]
+  // Springs (SumiSpring), in Apple's terms. Surfaces open on a gentle spring
+  // that overshoots a touch and settles; they close critically damped and
+  // quicker, with no bounce on the way out.
+  readonly property real openResponse: 0.38
+  readonly property real openDamping: 0.75
+  readonly property real closeResponse: 0.24
+  readonly property real closeDamping: 1
+  // How small a surface starts as it settles in.
+  readonly property real settleFrom: 0.95
+  // How far into its spring a surface is fully opaque. Early, so it is there
+  // at once and the spring shapes the settle rather than delaying the arrival.
+  readonly property real opaqueAt: 0.35
 }

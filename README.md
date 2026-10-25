@@ -75,6 +75,13 @@ The repo is the source of truth. On the machine you edit from, install with
 - **Nothing slow before the first frame.** Starting processes, building
   guard scripts and refreshing data all go after the surface is on screen
   (a short `Timer`), and repeated work is cached.
+- **A surface that draws its own motion needs Hyprland's off.** Add its
+  namespace to the `no_anim` rule in `hypr/sumi.lua`, or Hyprland animates
+  its geometry too (a parked surface then sweeps in from the corner).
+- **Use `SumiSpring` for motion**, with values from `SumiTokens`: gentle and
+  slightly springy in, critically damped and quicker out. Never assign a
+  bound property from code (`target = …` on a spring whose target is bound):
+  in QML that silently removes the binding.
 - **Fill a `ListModel` with one `append(array)`.** Appending row by row re-runs
   every binding on its count for each row.
 - **Keep `pgrep`/`pkill` off keypress paths.** Scanning `/proc` costs about

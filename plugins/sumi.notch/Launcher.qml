@@ -206,10 +206,6 @@ PanelWindow {
   property string initialQuery: ""
 
   onWantedChanged: {
-    revealAnim.stop()
-    revealAnim.to = wanted ? 1 : 0
-    revealAnim.duration = Style.duration(wanted ? ds.openMs : ds.closeMs)
-    revealAnim.start()
     if (!wanted) return
     query = initialQuery
     cursor = 0
@@ -228,7 +224,7 @@ PanelWindow {
   // blurred layer wherever what is under it changes, even a transparent one,
   // and four parked fullscreen layers halved the frame rate (30 FPS over
   // video). Opening grows it back; that is a resize, not a new surface.
-  readonly property bool parked: !wanted && appear === 0
+  readonly property bool parked: !wanted && appear <= 0 && !appearSpring.moving
   anchors { top: true; left: true; bottom: !parked; right: !parked }
   implicitWidth: 1
   implicitHeight: 1
@@ -241,15 +237,15 @@ PanelWindow {
   Item { id: inputCover; anchors.fill: parent }
   mask: Region { item: launcher.wanted ? inputCover : null }
 
-  // A short fade with a slight settle in, and a quicker fade out. Input and
-  // focus follow `wanted` at once; only the drawing eases.
-  property real appear: 0
-  NumberAnimation {
-    id: revealAnim
-    target: launcher
-    property: "appear"
-    easing.type: Easing.BezierSpline
-    easing.bezierCurve: launcher.ds.easeOut
+  // Settles in on a gentle spring and leaves quicker with no bounce. Input
+  // and focus follow `wanted` at once; only the drawing moves.
+  readonly property real appear: appearSpring.value
+  SumiSpring {
+    id: appearSpring
+    animated: Style.duration(1) > 0
+    response: launcher.wanted ? launcher.ds.openResponse : launcher.ds.closeResponse
+    dampingRatio: launcher.wanted ? launcher.ds.openDamping : launcher.ds.closeDamping
+    target: launcher.wanted ? 1 : 0
   }
 
   MouseArea {
@@ -262,8 +258,8 @@ PanelWindow {
   Loader {
     anchors.fill: parent
     // Kept through the fade out, then released.
-    active: launcher.wanted || launcher.appear > 0
-    opacity: launcher.appear
+    active: launcher.wanted || launcher.appear > 0 || appearSpring.moving
+    opacity: Math.max(0, Math.min(1, launcher.appear / launcher.ds.opaqueAt))
     sourceComponent: Component {
       Item {
         anchors.fill: parent
@@ -281,7 +277,7 @@ PanelWindow {
 
       Rectangle {
         id: card
-        scale: 0.98 + 0.02 * launcher.appear
+        scale: launcher.ds.settleFrom + (1 - launcher.ds.settleFrom) * launcher.appear
         width: Style.space(520)
         height: column.implicitHeight
         x: Math.round((parent.width - width) / 2)
