@@ -406,6 +406,20 @@ PanelWindow {
     }
   }
 
+  // One menu at a time across the shell: this dock's menu or library opening
+  // closes the others, and any other opening closes these.
+  onMenuItemChanged: if (menuItem !== null) host.closeMenusExcept(win)
+  onLibraryOpenChanged: if (libraryOpen) host.closeMenusExcept(win)
+
+  Connections {
+    target: win.host
+    function onMenusClosing(keep) {
+      if (keep === win) return
+      win.closeMenu()
+      win.libraryOpen = false
+    }
+  }
+
   Connections {
     target: win.dock
     function onLibraryToggled(screenName) {

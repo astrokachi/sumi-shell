@@ -340,6 +340,50 @@ Item {
     return true
   }
 
+  // ---- one menu at a time ------------------------------------------------------
+
+  // Opening any menu closes whichever one was already out: the control
+  // center, the Controls panel, the launcher, a widget's popout, the dock's
+  // menu and app library, and the Omarchy menu and notification panel, which
+  // report themselves over IPC (menuOpened / menuClosed) from their plugins.
+  signal menusClosing(var keep)
+  property var externalMenus: ({})
+  readonly property var externalMenuClosers: ({
+    "sumi.menu": "omarchy-shell -q shell hide omarchy.menu",
+    "sumi.notifications": "omarchy-shell -q notifications closePanel"
+  })
+
+  onControlCenterScreenChanged: if (controlCenterScreen !== "") closeMenusExcept("controlCenter")
+  onCustomizeScreenChanged: if (customizeScreen !== "") closeMenusExcept("customize")
+  onActivePopoutChanged: if (activePopout) closeMenusExcept("popout")
+
+  function closeMenusExcept(keep) {
+    if (keep !== "controlCenter") controlCenterScreen = ""
+    if (keep !== "customize") customizeScreen = ""
+    if (keep !== "launcher") launcherOpen = false
+    if (keep !== "popout" && activePopout) {
+      var popout = activePopout
+      if ("close" in popout) popout.close()
+      releasePopout(popout)
+    }
+    menusClosing(keep)
+    var kept = {}
+    for (var id in externalMenus) {
+      if (id === keep) kept[id] = true
+      else run(externalMenuClosers[id])
+    }
+    externalMenus = kept
+  }
+
+  function noteExternalMenu(id, opened) {
+    if (!externalMenuClosers[id]) return
+    var next = Object.assign({}, externalMenus)
+    if (opened) next[id] = true
+    else delete next[id]
+    externalMenus = next
+    if (opened) closeMenusExcept(id)
+  }
+
   // ---- popouts, click targets, commands ---------------------------------------
 
   function requestPopout(owner) {
@@ -477,7 +521,10 @@ Item {
 
   property bool launcherOpen: false
   property string launcherQuery: ""
-  onLauncherOpenChanged: if (!launcherOpen) launcherQuery = ""
+  onLauncherOpenChanged: {
+    if (launcherOpen) closeMenusExcept("launcher")
+    else launcherQuery = ""
+  }
   property var launcherScreen: Quickshell.screens.length > 0 ? Quickshell.screens[0] : null
 
   function toggleLauncher() {
@@ -516,6 +563,8 @@ Item {
       if (!root.launcherOpen) root.toggleLauncher()
     }
     function openWidget(id: string): void { root.summonBarWidget(id) }
+    function menuOpened(id: string): void { root.noteExternalMenu(id, true) }
+    function menuClosed(id: string): void { root.noteExternalMenu(id, false) }
     function controlTab(tab: string): void {
       root.controlTab = tab
       if (root.customizeScreen === "") root.toggleCustomize("")
@@ -525,7 +574,9 @@ Item {
       var meta = {}
       if (reg && reg.widgets) for (var k in reg.widgets) meta[k] = reg.widgets[k].metadata
       return JSON.stringify({ hosts: root.debugBarGeometry(), registry: reg && reg.widgets ? Object.keys(reg.widgets) : null, meta: meta,
-        services: { nightlight: !!root.nightlightService, notifications: !!root.notificationsService, idle: !!root.idleService } })
+        services: { nightlight: !!root.nightlightService, notifications: !!root.notificationsService, idle: !!root.idleService },
+        menus: { controlCenter: root.controlCenterScreen, customize: root.customizeScreen, launcher: root.launcherOpen,
+          popout: !!root.activePopout, external: Object.keys(root.externalMenus) } })
     }
   }
 

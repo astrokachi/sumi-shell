@@ -122,7 +122,11 @@ Item {
   readonly property var appLibrary: root.shell ? root.shell.appLibrary : null
   property bool deleteConfirmOpen: false
   property var deleteTarget: null
-  onOpenedChanged: if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
+  onOpenedChanged: {
+    if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
+    // The notch keeps one menu out at a time; tell it this one came or went.
+    Util.execDetached("omarchy-shell -q sumi.notch " + (opened ? "menuOpened" : "menuClosed") + " sumi.menu")
+  }
   // Bound to the central [menu] section in shell.toml via Commons.Color.qml.
   // Each color already includes its alpha companion (composed in the
   // singleton), so consumers can drop them straight into a Rectangle.

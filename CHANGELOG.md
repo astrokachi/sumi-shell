@@ -29,6 +29,14 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ### Fixes
 
+- **One menu at a time.** Opening any menu now closes the one already out,
+  instead of letting them pile up: the control center, the notch controls,
+  the launcher, a bar widget's popout, the dock's app menu and app library,
+  the command menu and the notification panel. The notch keeps the rule
+  (`closeMenusExcept`); the command menu and notification panel tell it when
+  they open or close (`omarchy-shell sumi.notch menuOpened|menuClosed <id>`),
+  and `sumi.notch debug` lists what is open under `menus`.
+
 - **The control center opens where it hangs.** Growing back from its parked
   1×1, Hyprland animated the resize, so it swept in from the screen's corner.
   `hypr/sumi.lua` now turns Hyprland's animation off for `sumi-cc` and

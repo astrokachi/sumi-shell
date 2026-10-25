@@ -1604,6 +1604,11 @@ Item {
 
   onOpenPanelChanged: if (!openPanel && panelHostScreen !== "") panelHostRelease.restart()
 
+  // The notch keeps one menu out at a time; tell it the panel came or went.
+  readonly property bool panelShown: openPanel !== null
+  onPanelShownChanged: Util.execDetached("omarchy-shell -q sumi.notch "
+    + (panelShown ? "menuOpened" : "menuClosed") + " sumi.notifications")
+
   Timer {
     id: panelHostRelease
     interval: 400
