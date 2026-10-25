@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "sumi.notch",
+  "name": "Notch",
+  "version": "0.2.0",
+  "author": "astrokachi",
+  "license": "MIT",
+  "description": "A quiet menu bar with a notch that opens into your widgets, and a dock.",
+  "kinds": [
+    "bar"
+  ],
+  "entryPoints": {
+    "bar": "Bar.qml"
+  }
+}

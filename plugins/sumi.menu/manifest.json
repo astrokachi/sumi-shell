@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "sumi.menu",
+  "name": "Menu",
+  "version": "1.0.0",
+  "author": "astrokachi",
+  "description": "The Omarchy command menu, drawn in Sumi.",
+  "kinds": [
+    "menu",
+    "bar-widget"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "menu": "Menu.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Menu",
+    "description": "Launches the Omarchy menu",
+    "category": "Compositor",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.menu"
+  }
+}

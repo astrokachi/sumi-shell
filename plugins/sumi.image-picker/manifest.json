@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "sumi.image-picker",
+  "name": "Image picker",
+  "version": "1.0.0",
+  "author": "astrokachi",
+  "description": "Theme and background picker, drawn in Sumi.",
+  "kinds": [
+    "overlay"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "overlay": "ImagePicker.qml"
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.image-picker"
+  }
+}

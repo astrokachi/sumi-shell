@@ -1,0 +1,13 @@
+// Sumi's changes to the Omarchy menu. Merged over Omarchy's defaults and
+// under ~/.config/omarchy/extensions/omarchy-menu.jsonc, so a row there with
+// the same id still wins.
+//
+// Write each row in full: unset fields are filled with defaults (label = the
+// id, no icon) and replace the stock row's, so copy the stock row from
+// $OMARCHY_PATH/default/omarchy/omarchy-menu.jsonc and change only what differs.
+{
+  // The keybindings list through Sumi's faster copy of Omarchy's viewer
+  // (bin/sumi-keybindings): it opens from cache and doesn't hang on saved
+  // workspace layouts.
+  "learn.keybindings": {"icon": "", "label": "Keybindings", "action": "$HOME/.local/bin/sumi-keybindings"}
+}

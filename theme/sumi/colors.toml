@@ -1,0 +1,34 @@
+# Sumi 墨 — ink-dark editorial. Warm greys like ground ink, light ink for
+# focus and selection, and shu red kept for signals (alerts, errors,
+# recording). Terminal colours are muted natural dyes.
+mode = "dark"
+
+accent = "#D8D4CA"
+selection = "#2E2E2E"
+muted = "#434343"
+
+background = "#1C1C1C"
+dark_background = "#161616"
+darker_background = "#0E0E0E"
+lighter_background = "#262626"
+
+foreground = "#D3D0C9"
+dark_foreground = "#6E706C"
+light_foreground = "#9A9C98"
+bright_foreground = "#E8E6E1"
+
+red = "#C73E3A"
+yellow = "#D6A55A"
+orange = "#E2943B"
+green = "#9AA25A"
+cyan = "#78A6A2"
+blue = "#7F9BB0"
+magenta = "#9E86A8"
+brown = "#9A5034"
+
+bright_red = "#D95A55"
+bright_yellow = "#E3B977"
+bright_green = "#B0B872"
+bright_cyan = "#93BAB6"
+bright_blue = "#9DB3C4"
+bright_magenta = "#B6A1BE"

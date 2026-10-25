@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "sumi.osd",
+  "name": "Sumi On-screen display",
+  "version": "1.0.0",
+  "author": "astrokachi",
+  "description": "Quickshell volume, brightness, and status overlays.",
+  "kinds": [
+    "panel"
+  ],
+  "keepLoaded": true,
+  "entryPoints": {
+    "panel": "Osd.qml"
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.osd"
+  }
+}
