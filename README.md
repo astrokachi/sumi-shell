@@ -50,8 +50,8 @@ migrated to `sumi.*` automatically.
 
 Sumi comes with six more dark Japanese themes. Each is an ordinary Omarchy
 theme, so the shell, terminal, editor and the rest follow it; pick one with
-`omarchy theme set <name>` or the theme picker. Every theme has at least ten
-wallpapers, graded into its palette.
+`omarchy theme set <name>` or the theme picker. Every theme has twelve
+wallpapers at 3840×2160, graded into its palette.
 
 | Theme | Idea | Focus | Signal |
 |---|---|---|---|
@@ -144,7 +144,7 @@ hypr/sumi.lua       Hyprland settings: borders, blur, overlay timing, shortcuts
 bin/                sumi-keybindings
 theme/<name>        the Omarchy themes, each with WALLPAPER-CREDITS.tsv
 backgrounds/<name>  each theme's extra wallpapers
-tools/              grade-wallpaper.sh: crops a picture to 2560×1440 and grades it into a theme
+tools/              grade-wallpaper.sh: crops a picture to 3840×2160 and grades it into a theme
 fonts/, fontconfig/ Inter, Zen Kaku Gothic New, and the rule that makes them the defaults
 install.sh, uninstall.sh
 ```

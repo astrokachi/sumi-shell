@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # grade-wallpaper.sh <theme> <input> <output.jpg> [gravity] [extra]
-#   Crops to 2560x1440 (cover) and grades the image into the theme's palette:
+#   Crops to 3840x2160 (cover) and grades the image into the theme's palette:
 #   a luminance gradient map in the theme's inks, blended over a partly
 #   desaturated original, then a gentle darken. Prints the output's mean
 #   luminance (0-1); a dark-theme wallpaper should land roughly 0.10-0.32.
@@ -26,9 +26,9 @@ magick -size 256x1 \
   \( -size 66x1 gradient:"${stops[2]}-${stops[3]}" \) \
   -delete 0 +append "$tmp/clut.png"
 if [[ $grav == +* || $grav == -* ]]; then
-  magick "$in"'[0]' -auto-orient -colorspace sRGB -alpha off -resize 2560x1440^ -crop "2560x1440$grav" +repage -extent 2560x1440 "$tmp/base.png"
+  magick "$in"'[0]' -auto-orient -colorspace sRGB -alpha off -resize 3840x2160^ -crop "3840x2160$grav" +repage -extent 3840x2160 "$tmp/base.png"
 else
-  magick "$in"'[0]' -auto-orient -colorspace sRGB -alpha off -resize 2560x1440^ -gravity "$grav" -extent 2560x1440 "$tmp/base.png"
+  magick "$in"'[0]' -auto-orient -colorspace sRGB -alpha off -resize 3840x2160^ -gravity "$grav" -extent 3840x2160 "$tmp/base.png"
 fi
 magick "$tmp/base.png" -modulate 100,$sat "$tmp/sat.png"
 magick "$tmp/base.png" -colorspace Gray -colorspace sRGB "$tmp/clut.png" -clut "$tmp/map.png"

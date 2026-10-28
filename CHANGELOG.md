@@ -16,10 +16,21 @@ about speed, the measurement before and after. Newest first. Add new work under
   preview). Ukiyo-e draws solid Prussian-blue keylines on popups and menus,
   Urushi gold hairlines, Yoru faint cyan ones; the rest keep Sumi's
   hairlines. Yoru's canvas palette was neon; its accents are toned down.
-- **11–13 wallpapers per theme** (73 in all), public domain, CC0, CC BY or
-  CC BY-SA, each credited in `theme/<name>/WALLPAPER-CREDITS.tsv`. They're
-  cropped to 2560×1440 and graded into their theme's palette with
-  `tools/grade-wallpaper.sh`, so each set reads as one.
+- **12 wallpapers per theme** (72 in all): photographs, prints, screens and
+  lacquerware, public domain, CC0, CC BY or CC BY-SA, each credited in
+  `theme/<name>/WALLPAPER-CREDITS.tsv`. They're graded into the theme's
+  palette with `tools/grade-wallpaper.sh`, so each set reads as one.
+- **Your own wallpapers stay local.** Files named `*.local.jpg`,
+  `*.local.png` or `*.local.tsv` (for their sources) in `backgrounds/<name>/`
+  are ignored by git but still installed, for pictures you can't
+  redistribute.
+- **Every wallpaper is a true 3840×2160.** The first cut was 2560×1440, and
+  most of Urushi's had been enlarged from 1,500–2,000 px originals, so they
+  looked soft. Each one is now cut from a full-resolution original, nothing
+  is enlarged by more than 10%, and images too small for that were replaced.
+  Three Ukiyo-e prints and several Urushi pieces only exist as smaller or
+  square scans; those are shown whole on a dark ground from the palette
+  instead of being blown up.
 - `install.sh` places every theme in `theme/` with its wallpapers;
   `uninstall.sh --purge` removes all seven.
 

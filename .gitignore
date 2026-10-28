@@ -2,3 +2,8 @@
 *.bak.*
 *.orig
 *~
+
+# Personal wallpapers that are not ours to redistribute; install.sh still places them.
+backgrounds/*/*.local.jpg
+backgrounds/*/*.local.png
+backgrounds/*/*.local.tsv
