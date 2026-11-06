@@ -31,16 +31,6 @@ PanelWindow {
   // The one Wi-Fi network showing its password field or actions, by SSID.
   property string openNetwork: ""
 
-  // "Resets in 2 h 14 m" from a limit's ISO time; "" when unknown.
-  function resetsIn(iso) {
-    var at = Date.parse(iso || "")
-    if (!(at > 0)) return ""
-    var minutes = Math.max(0, Math.round((at - Date.now()) / 60000))
-    var h = Math.floor(minutes / 60)
-    var m = minutes % 60
-    return "Resets in " + (h > 0 ? h + " h " : "") + m + " m"
-  }
-
   // Bring an item into the scrolled view, top first if it is taller.
   function reveal(item) {
     var top = item.mapToItem(body, 0, 0).y
@@ -63,7 +53,6 @@ PanelWindow {
     open = open === part ? "" : part
     if (open === "wifi") sys.scanWifi()
     if (open === "hotspot") sys.refreshHotspot()
-    if (open === "agents") { sys.readAgents(); sys.updateAgents(false) }
     if (open === "display") sys.refreshDisplays()
     if (open === "clocks") { sys.refreshClocks(); sys.refreshWeather() }
     if (open !== "bluetooth" && sys.discovering) sys.setDiscovering(false)
@@ -761,97 +750,6 @@ PanelWindow {
             Meter { glyph: "disk"; label: "Storage"; value: cc.sys.storage; readout: Math.round(cc.sys.storageUsedGb) + " / " + Math.round(cc.sys.storageTotalGb) + " GB" }
           }
         }
-
-        // ---- agents: how close each AI agent is to its limits ---------------
-        Fold {
-          id: agentsFold
-          part: cc.partIn(["agents"])
-          headHeight: Style.space(44)
-          visible: cc.sys.agents.length > 0
-
-          head: SummaryRow {
-            glyph: "sparkle"
-            title: "Agents"
-            summary: cc.sys.agents.filter(function(a) { return a.limits.length > 0 }).slice(0, 2).map(function(a) {
-              return a.name.split(" ")[0] + " " + Math.round(Math.max.apply(null, a.limits.map(function(l) { return l.percent })) * 100) + "%"
-            }).join(" · ")
-            expanded: agentsFold.open
-            onOpened: cc.toggle("agents")
-          }
-
-          Section {
-            shown: true
-            title: "Usage"
-            actionGlyph: "refresh"
-            onAction: cc.sys.updateAgents(true)
-
-            Repeater {
-              model: cc.sys.agents
-
-              Column {
-                id: agent
-                required property var modelData
-                width: parent.width
-                bottomPadding: Style.space(6)
-
-                Item {
-                  width: parent.width
-                  height: Style.space(26)
-
-                  Text {
-                    x: Style.space(8)
-                    anchors.verticalCenter: parent.verticalCenter
-                    textFormat: Text.PlainText
-                    text: agent.modelData.name
-                    color: cc.ink
-                    font.family: cc.ds.fontUi
-                    font.pixelSize: 13
-                    font.weight: Font.Medium
-                  }
-
-                  Text {
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.space(8)
-                    anchors.verticalCenter: parent.verticalCenter
-                    textFormat: Text.PlainText
-                    text: agent.modelData.prompts > 0
-                      ? agent.modelData.prompts + " prompts today" + (agent.modelData.tier ? " · " + agent.modelData.tier : "")
-                      : agent.modelData.tier
-                    color: cc.ink3
-                    font.family: cc.ds.fontUi
-                    font.pixelSize: 11
-                  }
-                }
-
-                Repeater {
-                  model: agent.modelData.limits
-
-                  Meter {
-                    required property var modelData
-                    glyph: "gauge"
-                    label: modelData.label || "Limit"
-                    value: Number(modelData.percent) || 0
-                    readout: Math.round((Number(modelData.percent) || 0) * 100) + "%"
-                    note: cc.resetsIn(modelData.resetsAt)
-                  }
-                }
-
-                Text {
-                  visible: agent.modelData.limits.length === 0
-                  leftPadding: Style.space(8)
-                  width: parent.width
-                  textFormat: Text.PlainText
-                  text: agent.modelData.status || "No limits reported"
-                  elide: Text.ElideRight
-                  color: cc.ink2
-                  font.family: cc.ds.fontUi
-                  font.pixelSize: 11
-                }
-              }
-            }
-          }
-        }
-
 
         // ---- battery, lock, power ------------------------------------------------
         // The battery flows out over lock and power, then opens to its modes.

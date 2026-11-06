@@ -788,70 +788,6 @@ QtObject {
     hotspotAction.running = true
   }
 
-  // ---- agents: usage limits of the AI agents ---------------------------------
-
-  readonly property string agentsDir: (Quickshell.env("XDG_STATE_HOME") || Quickshell.env("HOME") + "/.local/state") + "/omarchy/agents/usage"
-  property var agents: []
-  property double agentsUpdatedAt: 0
-
-  property Process agentsRead: Process {
-    command: ["bash", "-c", "for f in \"$1\"/*.json; do [ -f \"$f\" ] && cat \"$f\" && printf '\\n\\x1e\\n'; done", "agents", state.agentsDir]
-    stdout: StdioCollector {
-      onStreamFinished: {
-        var out = []
-        var newest = 0
-        var parts = text.split("\x1e")
-        for (var i = 0; i < parts.length; i++) {
-          var chunk = parts[i].trim()
-          if (!chunk) continue
-          try {
-            var a = JSON.parse(chunk)
-            var limits = Array.isArray(a.limits) ? a.limits.filter(function(l) { return l && l.percent !== undefined }) : []
-            var updated = Date.parse(a.updatedAt || "") || 0
-            if (updated > newest) newest = updated
-            // Omarchy writes a record for every agent it knows; keep the ones in use.
-            if (!limits.length && !(Number(a.totalPrompts) > 0) && !(Number(a.activeDays) > 0)) continue
-            out.push({ id: String(a.id || ""), name: String(a.name || a.id || "Agent"), tier: String(a.tierLabel || ""),
-              ready: a.ready === true, limits: limits, prompts: Number(a.todayPrompts) || 0,
-              tokens: Number(a.todayTotalTokens) || 0, status: String(a.usageStatusText || "") })
-          } catch (e) {}
-        }
-        // The ones with limits first, the closest to their limit at the top.
-        out.sort(function(x, y) {
-          var px = x.limits.length ? Math.max.apply(null, x.limits.map(function(l) { return l.percent })) : -1
-          var py = y.limits.length ? Math.max.apply(null, y.limits.map(function(l) { return l.percent })) : -1
-          return py - px
-        })
-        state.agents = out
-        state.agentsUpdatedAt = newest
-      }
-    }
-  }
-
-  property Process agentsUpdate: Process {
-    command: ["omarchy-agent-usage-update"]
-    onExited: state.readAgents()
-  }
-
-  function readAgents() {
-    if (!agentsRead.running) agentsRead.running = true
-  }
-
-  function updateAgents(force) {
-    if (agentsUpdate.running) return
-    if (!force && agentsUpdatedAt > 0 && Date.now() - agentsUpdatedAt < 2 * 60000) return
-    agentsUpdate.running = true
-  }
-
-  // The agents widget used to keep this fresh; with it gone, so does this.
-  property Timer agentsPoll: Timer {
-    interval: 5 * 60000
-    repeat: true
-    running: true
-    triggeredOnStart: true
-    onTriggered: { state.readAgents(); state.updateAgents(true) }
-  }
-
   // ---- refresh everything a panel is about to show -------------------------
 
   function refreshAll() {
@@ -860,7 +796,5 @@ QtObject {
     refreshProfiles()
     refreshDisplays()
     refreshHotspot()
-    readAgents()
-    updateAgents(false)
   }
 }

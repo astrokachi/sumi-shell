@@ -12,6 +12,9 @@ about speed, the measurement before and after. Newest first. Add new work under
   `center` section, so Omarchy's own clock sits there and a click opens its
   calendar. With an empty `center` it falls back to Sumi's plain time.
   Omarchy's agents and update widgets go in `right`, beside the indicators.
+- **No Agents section in the control center.** Omarchy's agents widget is
+  back on the bar and shows the same usage, so the control center drops its
+  copy, along with the five-minute usage poll it ran in the background.
 
 ### Themes
 
