@@ -8,10 +8,11 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ### Bar
 
-- **The middle of the bar hosts widgets again.** It draws the layout's
-  `center` section, so Omarchy's own clock sits there and a click opens its
-  calendar. With an empty `center` it falls back to Sumi's plain time.
-  Omarchy's agents and update widgets go in `right`, beside the indicators.
+- **The time opens a calendar.** The middle of the bar keeps Sumi's own
+  time, as it was; with `omarchy.clock` in the layout's `center` section, a
+  click on it opens that widget's calendar. The widget is laid out unseen
+  under the time, so the calendar opens centred beneath it. Omarchy's agents
+  and update widgets go in `right`, beside the indicators.
 - **No Agents section in the control center.** Omarchy's agents widget is
   back on the bar and shows the same usage, so the control center drops its
   copy, along with the five-minute usage poll it ran in the background.

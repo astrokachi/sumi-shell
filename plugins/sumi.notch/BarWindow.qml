@@ -126,22 +126,26 @@ PanelWindow {
     }
   }
 
-  // The middle: the layout's "center" widgets (Omarchy's clock and its
-  // calendar, by default), or Sumi's plain time when that section is empty.
-  // The notch (its widget wings, live activity and click/customize menu) is
-  // gone; Notch.qml is left in place, just unused.
+  // The middle: Sumi's plain time, always. With omarchy.clock in the layout's
+  // "center" section, a click opens that widget's calendar: the widget is
+  // laid out underneath, unseen, so the calendar opens centred under the
+  // time. The notch (its widget wings, live activity and click/customize
+  // menu) is gone; Notch.qml is left in place, just unused.
   Item {
     id: notch
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-    implicitWidth: centerRow.implicitWidth > 0 ? centerRow.implicitWidth : plainClock.implicitWidth
+    implicitWidth: Math.max(plainClock.implicitWidth, centerRow.implicitWidth)
     implicitHeight: win.host.barSize
     width: implicitWidth
     height: implicitHeight
 
+    readonly property bool hasCalendar: win.host.entries(["center"]).some(function(e) { return e && e.id === "omarchy.clock" })
+
     WidgetRow {
       id: centerRow
       anchors.centerIn: parent
+      opacity: 0
       host: win.host
       facade: stripFacade
       sections: ["center"]
@@ -151,11 +155,19 @@ PanelWindow {
     Clock {
       id: plainClock
       anchors.centerIn: parent
-      visible: centerRow.implicitWidth === 0
       ink: win.host.foreground
       family: win.host.uiFamily
       hour12: !win.host.clock24
       showDate: win.host.showDate
+    }
+
+    // Above the hidden widget, so the click is the time's, not the widget's.
+    MouseArea {
+      anchors.fill: parent
+      enabled: notch.hasCalendar
+      hoverEnabled: true
+      cursorShape: Qt.PointingHandCursor
+      onClicked: win.host.run("omarchy-shell shell toggle omarchy.clock")
     }
   }
 
