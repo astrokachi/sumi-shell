@@ -126,16 +126,37 @@ PanelWindow {
     }
   }
 
-  // Plain time in the middle. The notch (its widget wings, live activity and
-  // click/customize menu) is gone; Notch.qml is left in place, just unused.
-  Clock {
+  // The middle: the layout's "center" widgets (Omarchy's clock and its
+  // calendar, by default), or Sumi's plain time when that section is empty.
+  // The notch (its widget wings, live activity and click/customize menu) is
+  // gone; Notch.qml is left in place, just unused.
+  Item {
     id: notch
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.verticalCenter: parent.verticalCenter
-    ink: win.host.foreground
-    family: win.host.uiFamily
-    hour12: !win.host.clock24
-    showDate: win.host.showDate
+    implicitWidth: centerRow.implicitWidth > 0 ? centerRow.implicitWidth : plainClock.implicitWidth
+    implicitHeight: win.host.barSize
+    width: implicitWidth
+    height: implicitHeight
+
+    WidgetRow {
+      id: centerRow
+      anchors.centerIn: parent
+      host: win.host
+      facade: stripFacade
+      sections: ["center"]
+      screenName: win.screenName
+    }
+
+    Clock {
+      id: plainClock
+      anchors.centerIn: parent
+      visible: centerRow.implicitWidth === 0
+      ink: win.host.foreground
+      family: win.host.uiFamily
+      hour12: !win.host.clock24
+      showDate: win.host.showDate
+    }
   }
 
   Row {

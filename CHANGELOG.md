@@ -6,6 +6,13 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ## Unreleased
 
+### Bar
+
+- **The middle of the bar hosts widgets again.** It draws the layout's
+  `center` section, so Omarchy's own clock sits there and a click opens its
+  calendar. With an empty `center` it falls back to Sumi's plain time.
+  Omarchy's agents and update widgets go in `right`, beside the indicators.
+
 ### Themes
 
 - **Six more dark Japanese themes**, from the directions canvas: `andon`
