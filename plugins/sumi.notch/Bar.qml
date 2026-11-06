@@ -99,6 +99,11 @@ Item {
   readonly property string notchTone: pick(notchConfig.tone, ["black", "glass", "solid"], "black")
   readonly property string workspaceStyle: pick(notchConfig.workspaceStyle, ["dots", "numbers", "pills"], "dots")
   readonly property bool workspacesOccupiedOnly: notchConfig.workspacesOccupiedOnly === true
+  // bar.notch.centerFont in shell.json sets the family of the widgets in the
+  // middle of the bar (the clock, and the calendar it opens); unset, they use
+  // the bar's own.
+  readonly property string centerFontFamily: typeof notchConfig.centerFont === "string" && notchConfig.centerFont !== ""
+    ? notchConfig.centerFont : fontFamily
   readonly property bool showAppName: notchConfig.showAppName !== false
   readonly property bool clock24: notchConfig.clock24 === true
   readonly property bool showDate: notchConfig.showDate !== false

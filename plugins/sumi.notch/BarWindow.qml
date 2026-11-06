@@ -38,6 +38,13 @@ PanelWindow {
     host: win.host
   }
 
+  // The middle's widgets get their own facade, for bar.notch.centerFont.
+  BarFacade {
+    id: centerFacade
+    host: win.host
+    fontFamily: win.host.centerFontFamily
+  }
+
   Rectangle {
     anchors.fill: parent
     color: win.host.transparent ? "transparent" : win.host.glassy ? win.host.glassBackground : win.host.background
@@ -143,7 +150,7 @@ PanelWindow {
       id: centerRow
       anchors.centerIn: parent
       host: win.host
-      facade: stripFacade
+      facade: centerFacade
       sections: ["center"]
       screenName: win.screenName
     }
