@@ -6,6 +6,18 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ## Unreleased
 
+### Lock screen
+
+- **A quiet lock screen.** The date and a light time sit in the middle over
+  the wallpaper, now softened and a little muted under an even ink wash; your
+  name and a hairline password field rest near the foot. Inter throughout,
+  the ink scale for hierarchy, and shu red only for a wrong password. Gone:
+  the "LOCKED" label, user@host, the `›` prompt and block cursor, and the
+  life-in-weeks grid. The unlock logic (password, fingerprint, the shake on a
+  wrong password, video wallpapers, blanking) is unchanged. A video wallpaper
+  plays unblurred, as blurring every frame costs the GPU. Preview it with
+  `omarchy-shell lock preview` (any click closes it).
+
 ### Bar
 
 - **Bigger text, one setting.** `bar.notch.textBump` in `shell.json` adds

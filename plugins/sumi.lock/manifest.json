@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "id": "sumi.lock",
-  "name": "Weeks Lock Screen",
-  "version": "1.0.0",
+  "name": "Sumi Lock Screen",
+  "version": "2.0.0",
   "author": "astrokachi",
-  "description": "Lock screen with a giant clock, prompt-line password field, and your life laid out in weeks.",
+  "description": "A quiet lock screen: the date and time over a softened wallpaper, and a hairline password field.",
   "omarchy": {
     "capabilities": [
       "authentication"
