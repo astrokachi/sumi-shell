@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "id": "sumi.battery-saver",
   "name": "Battery saver",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "astrokachi",
-  "description": "Power-saver on every unplug, and suspend after a long idle while on battery.",
+  "description": "Power-saver on every unplug, a performance boost through heavy load, and suspend after a long idle while on battery.",
   "kinds": [
     "service"
   ],

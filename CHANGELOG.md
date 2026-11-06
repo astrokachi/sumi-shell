@@ -55,6 +55,19 @@ about speed, the measurement before and after. Newest first. Add new work under
   on springs too. The motion values live in `SumiTokens` (`openResponse`,
   `openDamping`, `closeResponse`, `closeDamping`, `settleFrom`, `opaqueAt`).
 
+### Speed
+
+- **Battery saver boosts through heavy load.** Power-saver pins every core at
+  800 MHz, so a build or a batch of renders crawled on battery. When all
+  cores stay at least 70% busy for 20 s on power-saver (battery 20% or more),
+  `sumi.battery-saver` takes a power-profiles-daemon performance hold. It lets
+  go after 30 s under 35% busy, on plug-in, or below 20% battery. Measured
+  under the same load (17 on 8 threads): 800 MHz before, 1.3–1.5 GHz boosted.
+  A hold leaves the remembered profile alone, and picking a profile by hand
+  drops it and stops boosts for 10 minutes. The hold's process exits within
+  5 s if quickshell dies, so it can't stay on. `powerprofilesctl list-holds`
+  shows it as `sumi.battery-saver`.
+
 ### Fixes
 
 - **One menu at a time.** Opening any menu now closes the one already out,
