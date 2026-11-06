@@ -261,7 +261,7 @@ PanelWindow {
                 text: "Wi-Fi is off."
                 color: cc.ink2
                 font.family: cc.ds.fontUi
-                font.pixelSize: 12
+                font.pixelSize: 12 + cc.ds.textBump
               }
 
               Repeater {
@@ -345,7 +345,7 @@ PanelWindow {
                 text: !cc.sys.bluetoothOn ? "Bluetooth is off." : "No devices yet. Scan to find one nearby."
                 color: cc.ink2
                 font.family: cc.ds.fontUi
-                font.pixelSize: 12
+                font.pixelSize: 12 + cc.ds.textBump
               }
 
               Repeater {
@@ -478,7 +478,7 @@ PanelWindow {
                     elide: Text.ElideRight
                     color: cc.ink
                     font.family: cc.ds.fontUi
-                    font.pixelSize: 13
+                    font.pixelSize: 13 + cc.ds.textBump
                   }
 
                   Text {
@@ -488,7 +488,7 @@ PanelWindow {
                       : "Off"
                     color: cc.ink2
                     font.family: cc.ds.fontUi
-                    font.pixelSize: 11
+                    font.pixelSize: 11 + cc.ds.textBump
                   }
                 }
 
@@ -538,7 +538,7 @@ PanelWindow {
                 text: cc.sys.textSize + " px"
                 color: cc.ink
                 font.family: cc.ds.fontUi
-                font.pixelSize: 13
+                font.pixelSize: 13 + cc.ds.textBump
                 font.weight: Font.Medium
                 font.features: { "tnum": 1 }
               }
@@ -688,7 +688,7 @@ PanelWindow {
               elide: Text.ElideRight
               color: cc.ink
               font.family: cc.ds.fontUi
-              font.pixelSize: 13
+              font.pixelSize: 13 + cc.ds.textBump
               font.weight: Font.Medium
             }
 
@@ -704,7 +704,7 @@ PanelWindow {
               elide: Text.ElideRight
               color: cc.ink2
               font.family: cc.ds.fontUi
-              font.pixelSize: 12
+              font.pixelSize: 12 + cc.ds.textBump
             }
           }
 
@@ -785,7 +785,7 @@ PanelWindow {
                   text: Math.round(cc.sys.batteryLevel * 100) + "%" + (cc.sys.batteryTime ? " · " + cc.sys.batteryTime : "")
                   color: cc.ink2
                   font.family: cc.ds.fontUi
-                  font.pixelSize: 12
+                  font.pixelSize: 12 + cc.ds.textBump
                   font.features: { "tnum": 1 }
                 }
 
@@ -841,7 +841,7 @@ PanelWindow {
                         elide: Text.ElideRight
                         color: mode.current ? cc.ds.onInk : cc.ink2
                         font.family: cc.ds.fontUi
-                        font.pixelSize: 12
+                        font.pixelSize: 12 + cc.ds.textBump
                         font.weight: Font.Medium
                       }
 
@@ -951,7 +951,7 @@ PanelWindow {
         text: crow.label
         color: cc.ink
         font.family: cc.ds.fontUi
-        font.pixelSize: 13
+        font.pixelSize: 13 + cc.ds.textBump
         font.weight: Font.Medium
       }
 
@@ -962,7 +962,7 @@ PanelWindow {
         elide: Text.ElideRight
         color: cc.ink2
         font.family: cc.ds.fontUi
-        font.pixelSize: 12
+        font.pixelSize: 12 + cc.ds.textBump
       }
     }
 
@@ -1016,7 +1016,7 @@ PanelWindow {
       lineHeight: 0.95
       color: tile.on ? cc.ds.onInk : cc.ink
       font.family: cc.ds.fontUi
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
       font.weight: Font.Medium
     }
 
@@ -1165,7 +1165,7 @@ PanelWindow {
           text: section.title
           color: cc.ink2
           font.family: cc.ds.fontUi
-          font.pixelSize: 12
+          font.pixelSize: 12 + cc.ds.textBump
         }
 
         Rectangle {
@@ -1191,7 +1191,7 @@ PanelWindow {
               text: section.actionLabel
               color: cc.ink2
               font.family: cc.ds.fontUi
-              font.pixelSize: 12
+              font.pixelSize: 12 + cc.ds.textBump
             }
           }
 
@@ -1248,7 +1248,7 @@ PanelWindow {
         elide: Text.ElideRight
         color: cc.ink
         font.family: cc.ds.fontUi
-        font.pixelSize: 13
+        font.pixelSize: 13 + cc.ds.textBump
       }
 
       Text {
@@ -1259,7 +1259,7 @@ PanelWindow {
         elide: Text.ElideRight
         color: cc.ink2
         font.family: cc.ds.fontUi
-        font.pixelSize: 11
+        font.pixelSize: 11 + cc.ds.textBump
       }
     }
 
@@ -1327,7 +1327,7 @@ PanelWindow {
           elide: Text.ElideRight
           color: cc.ink
           font.family: cc.ds.fontUi
-          font.pixelSize: 13
+          font.pixelSize: 13 + cc.ds.textBump
           font.weight: nrow.net.inUse ? Font.Medium : Font.Normal
         }
 
@@ -1338,7 +1338,7 @@ PanelWindow {
           text: nrow.joining ? "Joining…" : nrow.net.inUse ? "Connected" : nrow.net.known ? "Saved" : ""
           color: cc.ink2
           font.family: cc.ds.fontUi
-          font.pixelSize: 11
+          font.pixelSize: 11 + cc.ds.textBump
         }
       }
 
@@ -1427,7 +1427,7 @@ PanelWindow {
           clip: true
           color: cc.ink
           font.family: cc.ds.fontUi
-          font.pixelSize: 13
+          font.pixelSize: 13 + cc.ds.textBump
           Keys.onReturnPressed: joinButton.clicked()
           Keys.onEscapePressed: { cc.openNetwork = ""; text = "" }
 
@@ -1469,7 +1469,7 @@ PanelWindow {
       wrapMode: Text.WordWrap
       color: cc.ds.signal
       font.family: cc.ds.fontUi
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
     }
   }
 
@@ -1505,7 +1505,7 @@ PanelWindow {
       text: srow.title
       color: cc.ink
       font.family: cc.ds.fontUi
-      font.pixelSize: 13
+      font.pixelSize: 13 + cc.ds.textBump
       font.weight: Font.Medium
     }
 
@@ -1521,7 +1521,7 @@ PanelWindow {
       elide: Text.ElideRight
       color: cc.ink2
       font.family: cc.ds.fontUi
-      font.pixelSize: 12
+      font.pixelSize: 12 + cc.ds.textBump
       font.features: { "tnum": 1 }
     }
 
@@ -1552,7 +1552,7 @@ PanelWindow {
       text: fact.label
       color: cc.ink3
       font.family: cc.ds.fontUi
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
     }
 
     Text {
@@ -1560,7 +1560,7 @@ PanelWindow {
       text: fact.value
       color: cc.ink
       font.family: cc.ds.fontUi
-      font.pixelSize: 13
+      font.pixelSize: 13 + cc.ds.textBump
     }
   }
 
@@ -1597,7 +1597,7 @@ PanelWindow {
       elide: Text.ElideRight
       color: cc.ink
       font.family: cc.ds.fontUi
-      font.pixelSize: 12
+      font.pixelSize: 12 + cc.ds.textBump
     }
 
     Text {
@@ -1608,7 +1608,7 @@ PanelWindow {
       text: meter.note
       color: cc.ink3
       font.family: cc.ds.fontUi
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
     }
 
     Text {
@@ -1620,7 +1620,7 @@ PanelWindow {
       text: meter.readout
       color: cc.ink2
       font.family: cc.ds.fontMono
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
     }
 
     Rectangle {
@@ -1649,7 +1649,7 @@ PanelWindow {
     textFormat: Text.PlainText
     color: cc.ink2
     font.family: cc.ds.fontUi
-    font.pixelSize: 11
+    font.pixelSize: 11 + cc.ds.textBump
   }
 
   // A row of mutually exclusive choices.
@@ -1688,7 +1688,7 @@ PanelWindow {
             text: seg.label(segItem.modelData)
             color: segItem.on ? cc.ds.onInk : cc.ink2
             font.family: cc.ds.fontUi
-            font.pixelSize: 12
+            font.pixelSize: 12 + cc.ds.textBump
             font.weight: Font.Medium
           }
 
@@ -1733,7 +1733,7 @@ PanelWindow {
       text: tb.label
       color: tb.primary ? cc.ds.onInk : cc.ink
       font.family: cc.ds.fontUi
-      font.pixelSize: 12
+      font.pixelSize: 12 + cc.ds.textBump
       font.weight: Font.Medium
     }
 
@@ -1752,7 +1752,7 @@ PanelWindow {
       text: stat.value
       color: cc.ink
       font.family: cc.ds.fontUi
-      font.pixelSize: 13
+      font.pixelSize: 13 + cc.ds.textBump
       font.weight: Font.Medium
       font.features: { "tnum": 1 }
     }
@@ -1762,7 +1762,7 @@ PanelWindow {
       text: stat.label
       color: cc.ink2
       font.family: cc.ds.fontUi
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
     }
   }
 
@@ -1793,7 +1793,7 @@ PanelWindow {
         text: slider.label
         color: cc.ink2
         font.family: cc.ds.fontUi
-        font.pixelSize: 11
+        font.pixelSize: 11 + cc.ds.textBump
       }
 
       Text {
@@ -1804,7 +1804,7 @@ PanelWindow {
         elide: Text.ElideRight
         color: cc.ink3
         font.family: cc.ds.fontUi
-        font.pixelSize: 11
+        font.pixelSize: 11 + cc.ds.textBump
       }
     }
 
@@ -1892,7 +1892,7 @@ PanelWindow {
       text: Math.round(slider.value * 100) + "%"
       color: cc.ink2
       font.family: cc.ds.fontMono
-      font.pixelSize: 11
+      font.pixelSize: 11 + cc.ds.textBump
     }
   }
 

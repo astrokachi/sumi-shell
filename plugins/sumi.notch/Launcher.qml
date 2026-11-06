@@ -329,7 +329,7 @@ PanelWindow {
               color: launcher.ink
               selectionColor: Qt.rgba(launcher.ink.r, launcher.ink.g, launcher.ink.b, 0.25)
               font.family: launcher.ds.fontUi
-              font.pixelSize: 17
+              font.pixelSize: 17 + launcher.ds.textBump
               onTextEdited: launcher.query = text
 
               Keys.onPressed: function(event) {
@@ -386,7 +386,7 @@ PanelWindow {
                 text: "esc"
                 color: launcher.ink2
                 font.family: launcher.ds.fontMono
-                font.pixelSize: 11
+                font.pixelSize: 11 + launcher.ds.textBump
               }
             }
 
@@ -417,7 +417,7 @@ PanelWindow {
               elide: Text.ElideMiddle
               color: launcher.ink3
               font.family: launcher.ds.fontUi
-              font.pixelSize: 13
+              font.pixelSize: 13 + launcher.ds.textBump
             }
 
             Repeater {
@@ -442,7 +442,7 @@ PanelWindow {
                   text: entry.modelData.title
                   color: launcher.ink3
                   font.family: launcher.ds.fontUi
-                  font.pixelSize: 12
+                  font.pixelSize: 12 + launcher.ds.textBump
                 }
 
                 Rectangle {
@@ -494,7 +494,7 @@ PanelWindow {
                     elide: entry.modelData.path ? Text.ElideMiddle : Text.ElideRight
                     color: launcher.ink
                     font.family: launcher.ds.fontUi
-                    font.pixelSize: 14
+                    font.pixelSize: 14 + launcher.ds.textBump
                   }
 
                   Text {
@@ -510,7 +510,7 @@ PanelWindow {
                     elide: Text.ElideRight
                     color: launcher.ink3
                     font.family: launcher.ds.fontUi
-                    font.pixelSize: 12
+                    font.pixelSize: 12 + launcher.ds.textBump
                   }
 
                   HoverHandler {
@@ -542,7 +542,7 @@ PanelWindow {
                   text: actionRow.modelData.title
                   color: launcher.ink
                   font.family: launcher.ds.fontUi
-                  font.pixelSize: 14
+                  font.pixelSize: 14 + launcher.ds.textBump
                 }
 
                 HoverHandler {
@@ -588,7 +588,7 @@ PanelWindow {
                 elide: Text.ElideMiddle
                 color: launcher.ink2
                 font.family: launcher.ds.fontUi
-                font.pixelSize: 12
+                font.pixelSize: 12 + launcher.ds.textBump
               }
             }
 
@@ -604,7 +604,7 @@ PanelWindow {
                 text: launcher.actionsOpen ? "Run" : "Open"
                 color: launcher.ink
                 font.family: launcher.ds.fontUi
-                font.pixelSize: 12
+                font.pixelSize: 12 + launcher.ds.textBump
               }
               KeyChip { text: "↵" }
               Rectangle { anchors.verticalCenter: parent.verticalCenter; width: 1; height: Style.space(14); color: launcher.ds.line }
@@ -614,7 +614,7 @@ PanelWindow {
                 text: "Actions"
                 color: launcher.ink2
                 font.family: launcher.ds.fontUi
-                font.pixelSize: 12
+                font.pixelSize: 12 + launcher.ds.textBump
               }
               KeyChip { text: "ctrl K" }
             }
@@ -641,7 +641,7 @@ PanelWindow {
       text: chip.text
       color: launcher.ink2
       font.family: launcher.ds.fontMono
-      font.pixelSize: 11
+      font.pixelSize: 11 + launcher.ds.textBump
     }
   }
 }

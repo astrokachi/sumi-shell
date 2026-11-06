@@ -13,6 +13,10 @@ QtObject {
   readonly property string fontUi: "Inter"
   readonly property string fontJp: "Zen Kaku Gothic New"
   readonly property string fontMono: "JetBrainsMono Nerd Font"
+  // Added to every text size on the bar, control center and launcher (and
+  // the menu, which reads the same setting): bar.notch.textBump in
+  // shell.json, in px. Icons stay their size.
+  property int textBump: 0
 
   // Ink, from strongest to quietest. Secondary inks are the primary at
   // lower opacity so they sit on any surface.

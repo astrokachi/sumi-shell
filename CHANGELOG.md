@@ -8,6 +8,11 @@ about speed, the measurement before and after. Newest first. Add new work under
 
 ### Bar
 
+- **Bigger text, one setting.** `bar.notch.textBump` in `shell.json` adds
+  that many px to every text size on the bar, the control center, the
+  launcher and the menu (2 here, clamped to -4..12). Icons keep their size,
+  and the rest of the shell and GTK apps follow `omarchy display text size`
+  as before.
 - **The time opens a calendar.** The middle of the bar keeps Sumi's own
   time, as it was; with `omarchy.clock` in the layout's `center` section, a
   click on it opens that widget's calendar. The widget is laid out unseen

@@ -114,7 +114,7 @@ Item {
           color: root.style === "pills" && dot.active ? Qt.rgba(root.host.background.r, root.host.background.g, root.host.background.b, 1) : root.ink
           opacity: root.style === "pills" && dot.active ? 1 : dot.strength
           font.family: root.host.uiFamily
-          font.pixelSize: Style.space(12)
+          font.pixelSize: Style.space(12) + root.host.ds.textBump
           font.weight: Font.Medium
           font.features: { "tnum": 1 }
           Behavior on opacity { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }

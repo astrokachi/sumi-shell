@@ -595,7 +595,10 @@ Item {
     }
   }
 
-  SumiTokens { id: sumiTokens }
+  SumiTokens {
+    id: sumiTokens
+    textBump: Math.max(-4, Math.min(12, Math.round(Number(root.notchConfig.textBump) || 0)))
+  }
   SystemState {
     id: systemState
     active: root.controlCenterScreen !== ""

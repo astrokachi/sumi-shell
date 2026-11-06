@@ -132,6 +132,12 @@ Item {
   // singleton), so consumers can drop them straight into a Rectangle.
   // The background instead follows the bar, as the control center and
   // launcher do: the bar's colour, frosted unless the bar is solid.
+  // bar.notch.textBump in shell.json: px added to every text size, as on
+  // the bar, control center and launcher.
+  readonly property int textBump: {
+    var b = root.shell && root.shell.barConfig && root.shell.barConfig.notch ? Number(root.shell.barConfig.notch.textBump) : 0
+    return Math.max(-4, Math.min(12, Math.round(b) || 0))
+  }
   readonly property string barLook: root.shell && root.shell.barConfig
     && root.shell.barConfig.background ? root.shell.barConfig.background : "glassy"
   readonly property color barBackground: Commons.Color.bar.background
@@ -1710,7 +1716,7 @@ Item {
                   elide: Text.ElideRight
                   color: arow.held ? root.selectedText : root.foreground
                   font.family: root.fontFamily
-                  font.pixelSize: 13
+                  font.pixelSize: 13 + root.textBump
                 }
                 Row {
                   id: atrail
@@ -1727,7 +1733,7 @@ Item {
                     elide: Text.ElideRight
                     color: root.ink3
                     font.family: root.fontFamily
-                    font.pixelSize: 12
+                    font.pixelSize: 12 + root.textBump
                   }
                   Text {
                     anchors.verticalCenter: parent.verticalCenter
@@ -1736,7 +1742,7 @@ Item {
                     text: arow.value === "" ? (root.keyHints[arow.modelData.itemId] || "") : ""
                     color: root.ink3
                     font.family: root.monoFamily
-                    font.pixelSize: 11
+                    font.pixelSize: 11 + root.textBump
                   }
                   Sumi.SumiIcon {
                     anchors.verticalCenter: parent.verticalCenter
@@ -1895,7 +1901,7 @@ Item {
             readOnly: root.deleteConfirmOpen
             color: root.foreground
             font.family: root.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: 16 + root.textBump
             onTextChanged: if (text !== root.filterText) root.setFilter(text)
           }
 
@@ -1908,7 +1914,7 @@ Item {
             color: root.foreground
             opacity: 0.5
             font.family: root.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: 16 + root.textBump
             elide: Text.ElideRight
           }
 
@@ -1946,7 +1952,7 @@ Item {
             text: { var it = root.item(root.activeMenu); return it ? (it.label || it.title) : "" }
             color: backHover.hovered ? root.selectedText : root.foreground
             font.family: root.fontFamily
-            font.pixelSize: 15
+            font.pixelSize: 15 + root.textBump
             font.weight: Font.DemiBold
             elide: Text.ElideRight
           }
@@ -2133,7 +2139,7 @@ Item {
                   text: row.cleanLabel
                   color: row.hasCursor ? root.selectedText : root.foreground
                   font.family: root.fontFamily
-                  font.pixelSize: root.dropdown ? 13 : 14
+                  font.pixelSize: (root.dropdown ? 13 : 14) + root.textBump
                   font.weight: Font.Normal
                   elide: Text.ElideRight
                 }
@@ -2147,7 +2153,7 @@ Item {
                   color: root.foreground
                   opacity: 0.52
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.bodySmall
+                  font.pixelSize: Style.font.bodySmall + root.textBump
                   elide: Text.ElideRight
                 }
               }
@@ -2168,7 +2174,7 @@ Item {
                   elide: Text.ElideRight
                   color: root.ink3
                   font.family: root.fontFamily
-                  font.pixelSize: 12
+                  font.pixelSize: 12 + root.textBump
                   anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -2178,7 +2184,7 @@ Item {
                   text: row.keyText
                   color: root.ink3
                   font.family: root.monoFamily
-                  font.pixelSize: 11
+                  font.pixelSize: 11 + root.textBump
                   anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -2197,7 +2203,7 @@ Item {
                   color: root.foreground
                   opacity: 0.45
                   font.family: root.fontFamily
-                  font.pixelSize: Style.font.body
+                  font.pixelSize: Style.font.body + root.textBump
                   anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -2282,7 +2288,7 @@ Item {
             elide: Text.ElideRight
             color: root.ink2
             font.family: root.fontFamily
-            font.pixelSize: 13
+            font.pixelSize: 13 + root.textBump
           }
         }
 

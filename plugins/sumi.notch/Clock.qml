@@ -10,6 +10,7 @@ Row {
   property string family: "Inter"
   property bool hour12: true
   property bool showDate: true
+  property int textBump: 0
 
   readonly property var locale: Qt.locale(Commons.I18n.formatLocale)
 
@@ -28,7 +29,7 @@ Row {
     color: root.ink
     opacity: 0.62
     font.family: root.family
-    font.pixelSize: Commons.Style.space(13)
+    font.pixelSize: Commons.Style.space(13) + root.textBump
     font.weight: Font.Medium
   }
 
@@ -38,7 +39,7 @@ Row {
     text: clock.date.toLocaleTimeString(root.locale, root.hour12 ? "h:mm AP" : "HH:mm")
     color: root.ink
     font.family: root.family
-    font.pixelSize: Commons.Style.space(13)
+    font.pixelSize: Commons.Style.space(13) + root.textBump
     font.weight: Font.DemiBold
     font.features: { "tnum": 1 }
   }

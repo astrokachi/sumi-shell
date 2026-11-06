@@ -35,7 +35,7 @@ Item {
     elide: Text.ElideRight
     color: root.ink
     font.family: root.host.uiFamily
-    font.pixelSize: Style.space(13)
+    font.pixelSize: Style.space(13) + root.host.ds.textBump
     font.weight: Font.DemiBold
   }
 

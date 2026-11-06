@@ -57,7 +57,7 @@ Row {
       text: Math.round(cluster.sys.batteryLevel * 100) + "%"
       color: cluster.ink
       font.family: cluster.host.ds.fontUi
-      font.pixelSize: 13
+      font.pixelSize: 13 + cluster.host.ds.textBump
       font.features: { "tnum": 1 }
     }
   }

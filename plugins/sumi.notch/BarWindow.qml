@@ -159,6 +159,7 @@ PanelWindow {
       family: win.host.uiFamily
       hour12: !win.host.clock24
       showDate: win.host.showDate
+      textBump: win.host.ds.textBump
     }
 
     // Above the hidden widget, so the click is the time's, not the widget's.
@@ -250,7 +251,7 @@ PanelWindow {
         text: win.host.tooltipText
         color: Commons.Color.tooltip.text
         font.family: win.host.uiFamily
-        font.pixelSize: Style.space(12)
+        font.pixelSize: Style.space(12) + win.host.ds.textBump
       }
     }
   }
