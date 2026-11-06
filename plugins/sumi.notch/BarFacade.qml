@@ -16,7 +16,7 @@ QtObject {
   readonly property color background: Qt.rgba(paper.r, paper.g, paper.b, 1)
   // Hosted widgets paint their glyphs in `urgent`; keep them monochrome.
   property color urgent: ink
-  property string fontFamily: host.fontFamily
+  readonly property string fontFamily: host.fontFamily
   readonly property string position: host.position
   readonly property bool vertical: false
   readonly property int barSize: host.barSize
