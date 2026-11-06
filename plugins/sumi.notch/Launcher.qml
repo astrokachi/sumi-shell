@@ -283,7 +283,7 @@ PanelWindow {
         x: Math.round((parent.width - width) / 2)
         y: Math.round(parent.height * 0.15)
         radius: launcher.ds.rPanel
-        color: Qt.rgba(launcher.ds.paper.r, launcher.ds.paper.g, launcher.ds.paper.b, 0.86)
+        color: launcher.host.panelBackground
         border.width: 1
         border.color: launcher.ds.line
         clip: true

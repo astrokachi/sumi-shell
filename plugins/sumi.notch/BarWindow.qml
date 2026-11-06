@@ -126,12 +126,16 @@ PanelWindow {
     }
   }
 
-  Notch {
+  // Plain time in the middle. The notch (its widget wings, live activity and
+  // click/customize menu) is gone; Notch.qml is left in place, just unused.
+  Clock {
     id: notch
     anchors.horizontalCenter: parent.horizontalCenter
-    anchors.top: parent.top
-    host: win.host
-    screenName: win.screenName
+    anchors.verticalCenter: parent.verticalCenter
+    ink: win.host.foreground
+    family: win.host.uiFamily
+    hour12: !win.host.clock24
+    showDate: win.host.showDate
   }
 
   Row {

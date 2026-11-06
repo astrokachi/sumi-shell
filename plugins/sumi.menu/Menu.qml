@@ -130,7 +130,13 @@ Item {
   // Bound to the central [menu] section in shell.toml via Commons.Color.qml.
   // Each color already includes its alpha companion (composed in the
   // singleton), so consumers can drop them straight into a Rectangle.
-  property color background: Commons.Color.menu.background
+  // The background instead follows the bar, as the control center and
+  // launcher do: the bar's colour, frosted unless the bar is solid.
+  readonly property string barLook: root.shell && root.shell.barConfig
+    && root.shell.barConfig.background ? root.shell.barConfig.background : "glassy"
+  readonly property color barBackground: Commons.Color.bar.background
+  property color background: barLook === "opaque" ? barBackground
+    : Qt.rgba(barBackground.r, barBackground.g, barBackground.b, Math.min(barBackground.a, 0.62))
   property color foreground: Commons.Color.menu.text
   // Sumi: a hairline edge, a 14 px card with 8 px rows inside it, 36 px
   // rows and 14 px labels. The edge is the Control Center's ink hairline
@@ -156,13 +162,21 @@ Item {
   property int headerHeight: root.dropdown ? (root.filterText ? Style.space(40) : 0) : Style.space(44)
   property int contentSpacing: root.dropdown ? (root.filterText ? Style.space(6) : 0) : Style.space(6)
   property int baseRowHeight: root.dropdown ? Style.space(34) : Style.space(36)
+  // Drill-in: inside a submenu the card is headed by a back row.
+  property int backRowHeight: root.dropdown && !root.dmenuActive && !root.filterText && root.activeMenu !== "root" ? root.baseRowHeight : 0
+  // Every level of the drill-in uses the same card width, so going in and out
+  // never moves the card's edges. Wider menus (fonts, screen recording) still
+  // get their extra room.
+  function drillWidthFor(menuId) { return Math.max(Style.space(272), root.cardWidthFor(menuId)) }
   property int detailRowHeight: Style.space(48)
   readonly property int sepHeight: Style.space(11)
   readonly property string monoFamily: "JetBrainsMono Nerd Font"
   readonly property color ink3: Util.alpha(foreground, 0.56)
   readonly property int cascadeGap: Style.space(6)
-  readonly property int dropLeft: Style.space(10)
-  readonly property int dropTop: Style.space(40)
+  // The root card opens where the Apps launcher does: centred, 15% down the
+  // screen. Submenus still cascade out to its right.
+  readonly property int dropLeft: Math.max(Style.space(10), Math.round((panel.width - root.cardWidthFor("root")) / 2))
+  readonly property int dropTop: Math.max(Style.space(40), Math.round(panel.height * 0.15))
 
   // ---- Sumi: groups, key hints and values -------------------------------
 
@@ -288,24 +302,19 @@ Item {
     return y
   }
 
-  // Where each card in the cascade sits: [{ x, y, width }], outermost first.
-  // Each submenu's first row lines up with the row that opened it.
+  // Where each level's card sits: [{ x, y, width }], outermost first.
+  // Drill-in: every level opens in the same place as the root card (centred,
+  // where the Apps launcher opens), so the menu never grows sideways or runs
+  // off screen however deep it goes. Only the last entry is drawn.
   readonly property var cascadeGeometry: {
     void(root.layoutSerial)
     var out = []
-    var x = root.dropLeft
-    var y = root.dropTop
     var path = root.cascadePath
+    var margin = Style.space(10)
     for (var i = 0; i < path.length; i++) {
-      var width = root.cardWidthFor(path[i])
-      out.push({ x: x, y: y, width: width })
-      if (i < path.length - 1) {
-        var rows = root.rowsFor(path[i], root.providerRevision, root.checkedResults)
-        var index = -1
-        for (var k = 0; k < rows.length; k++) if (rows[k].target === path[i + 1] || rows[k].itemId === path[i + 1]) index = k
-        y += Math.max(0, root.rowsOffset(rows, Math.max(0, index)))
-        x += width + root.cascadeGap
-      }
+      var width = root.drillWidthFor(path[i])
+      var x = Math.max(margin, Math.round((panel.width - width) / 2))
+      out.push({ x: x, y: root.dropTop, width: width })
     }
     return out
   }
@@ -336,7 +345,7 @@ Item {
   property int visibleRowsHeight: root.dmenuActive ? dmenuRowListHeight(layoutSerial, displayModel.count, filterText) : rowListHeight(layoutSerial, displayModel.count, filterText, searchDivider)
   property int cardHeight: root.dmenuActive
     ? Math.min(contentMargin * 2 + headerHeight + (mode === "input" ? 0 : contentSpacing + visibleRowsHeight), panel.height - Style.gapsOut * 2)
-    : Math.min(contentMargin * 2 + headerHeight + contentSpacing + visibleRowsHeight, panel.height - Style.gapsOut * 2)
+    : Math.min(contentMargin * 2 + headerHeight + backRowHeight + contentSpacing + visibleRowsHeight, panel.height - Style.gapsOut * 2)
 
   function finishRequest(selection) {
     if (!root.requestActive || !root.doneFile) {
@@ -382,7 +391,7 @@ Item {
     if (root.dropdown) {
       var geo = root.cascadeGeometry
       var cardY = geo.length ? geo[geo.length - 1].y : root.dropTop
-      return Math.max(root.baseRowHeight * 3, panel.height - Math.min(cardY, panel.height * 0.4) - Style.space(24) - root.contentMargin * 2 - root.headerHeight - root.contentSpacing)
+      return Math.max(root.baseRowHeight * 3, panel.height - Math.min(cardY, panel.height * 0.4) - Style.space(24) - root.contentMargin * 2 - root.headerHeight - root.backRowHeight - root.contentSpacing)
     }
     var top = panel.cardTop >= 0 ? panel.cardTop : Style.gapsOut
     var available = panel.height - top - Style.gapsOut - root.contentMargin * 2 - root.headerHeight - root.contentSpacing
@@ -1571,7 +1580,7 @@ Item {
   Sumi.ParkedOverlayWindow {
     id: panel
     // The dropdown settles in from the bar's mark; a picker dialog from its middle.
-    revealOrigin: root.dropdown ? Item.TopLeft : Item.Center
+    revealOrigin: root.dropdown ? Item.Top : Item.Center
     shown: root.opened && root.rowsLoaded
     WlrLayershell.namespace: "omarchy-menu"
 
@@ -1607,10 +1616,10 @@ Item {
       onClicked: root.cancel()
     }
 
-    // The menus navigated through stay open to the left, each with the row
-    // that opened the next one held.
+    // Drill-in: the menus navigated through are not drawn; the back row in
+    // the card leads back to them. (Was: they stayed open to the left.)
     Repeater {
-      model: root.dropdown ? Math.max(0, root.cascadePath.length - 1) : 0
+      model: 0
 
       BorderSurface {
         id: ancestor
@@ -1903,6 +1912,55 @@ Item {
             elide: Text.ElideRight
           }
 
+        }
+
+        // Drill-in back row: "‹ Development". Click (or Left / Backspace) goes up a level.
+        Rectangle {
+          id: backRow
+          width: parent.width
+          height: root.backRowHeight
+          visible: root.backRowHeight > 0
+          radius: root.cornerRadius
+          color: backHover.hovered ? root.selectedBackground : "transparent"
+
+          Sumi.SumiIcon {
+            id: backGlyph
+            anchors.left: parent.left
+            anchors.leftMargin: Style.space(10)
+            anchors.verticalCenter: parent.verticalCenter
+            name: "chevron"
+            rotation: 180
+            size: 13
+            color: backHover.hovered ? root.selectedText : root.foreground
+            opacity: 0.6
+          }
+
+          Text {
+            anchors.left: backGlyph.right
+            anchors.leftMargin: Style.space(10)
+            anchors.right: parent.right
+            anchors.rightMargin: Style.space(10)
+            anchors.verticalCenter: parent.verticalCenter
+            textFormat: Text.PlainText
+            // The row's own name; a submenu's title is often its section's (all of Remove's say "Remove").
+            text: { var it = root.item(root.activeMenu); return it ? (it.label || it.title) : "" }
+            color: backHover.hovered ? root.selectedText : root.foreground
+            font.family: root.fontFamily
+            font.pixelSize: 15
+            font.weight: Font.DemiBold
+            elide: Text.ElideRight
+          }
+
+          Rectangle {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            height: 1
+            color: Util.alpha(root.foreground, 0.09)
+          }
+
+          HoverHandler { id: backHover; cursorShape: Qt.PointingHandCursor }
+          TapHandler { onTapped: root.goBack() }
         }
 
         Item {

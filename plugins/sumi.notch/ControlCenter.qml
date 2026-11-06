@@ -28,6 +28,8 @@ PanelWindow {
 
   // "wifi", "bluetooth", "display", "sound", "system", "clocks", "battery" or "".
   property string open: ""
+  // The one Wi-Fi network showing its password field or actions, by SSID.
+  property string openNetwork: ""
 
   // "Resets in 2 h 14 m" from a limit's ISO time; "" when unknown.
   function resetsIn(iso) {
@@ -173,7 +175,7 @@ PanelWindow {
     width: Style.space(340)
     height: Math.min(body.implicitHeight + Style.space(24), cc.height - y - Style.space(12))
     radius: cc.ds.rPanel
-    color: Qt.rgba(cc.ds.paper.r, cc.ds.paper.g, cc.ds.paper.b, 0.82)
+    color: cc.host.panelBackground
     border.width: 1
     border.color: cc.ds.line
     clip: true
@@ -435,7 +437,7 @@ PanelWindow {
             label: "Display"
             detail: {
               // With more than one monitor, name the one the slider dims.
-              var m = cc.sys.monitors.filter(function(x) { return x.focused })[0]
+              var m = cc.sys.focusedMonitor
               if (!m) return ""
               if (cc.sys.monitors.filter(function(x) { return x.enabled }).length > 1)
                 return m.label + (cc.sys.brightnessAvailable ? "" : " · no brightness control")
@@ -493,7 +495,7 @@ PanelWindow {
                   Text {
                     textFormat: Text.PlainText
                     text: monitorRow.modelData.enabled
-                      ? monitorRow.modelData.width + " × " + monitorRow.modelData.height + " · " + monitorRow.modelData.refresh + " Hz" + (monitorRow.modelData.focused ? " · focused" : "")
+                      ? monitorRow.modelData.width + " × " + monitorRow.modelData.height + " · " + monitorRow.modelData.refresh + " Hz" + (monitorRow.modelData.name === cc.sys.brightnessMonitor ? " · focused" : "")
                       : "Off"
                     color: cc.ink2
                     font.family: cc.ds.fontUi
@@ -850,205 +852,6 @@ PanelWindow {
           }
         }
 
-        // ---- clocks and weather -------------------------------------------------
-        Fold {
-          id: clocksFold
-          part: cc.partIn(["clocks"])
-          headHeight: Style.space(44)
-
-          head: SummaryRow {
-            glyph: "cloud"
-            title: "Clocks & Weather"
-            summary: {
-              var parts = []
-              if (cc.sys.weatherTemp) parts.push(cc.sys.weatherTemp + " " + cc.sys.weatherSky)
-              var first = cc.sys.cities.length > 1 ? cc.sys.cities[1] : null
-              var t = first ? cc.sys.cityTimes[first.zone] : ""
-              if (t) parts.push(first.name + " " + String(t).split("|")[0])
-              return parts.join(" · ")
-            }
-            expanded: clocksFold.open
-            onOpened: cc.toggle("clocks")
-          }
-
-          Section {
-            shown: true
-            title: cc.sys.weatherPlace ? "Weather in " + cc.sys.weatherPlace : "Weather"
-
-            Item {
-              width: parent.width
-              height: Style.space(46)
-              visible: cc.sys.weatherTemp !== ""
-
-              Text {
-                id: bigTemp
-                x: Style.space(8)
-                anchors.verticalCenter: parent.verticalCenter
-                textFormat: Text.PlainText
-                text: cc.sys.weatherTemp
-                color: cc.ink
-                font.family: cc.ds.fontUi
-                font.pixelSize: 26
-                font.weight: Font.Light
-                font.features: { "tnum": 1 }
-              }
-
-              Column {
-                anchors.left: bigTemp.right
-                anchors.leftMargin: Style.space(12)
-                anchors.right: parent.right
-                anchors.verticalCenter: parent.verticalCenter
-
-                Text {
-                  width: parent.width
-                  textFormat: Text.PlainText
-                  text: cc.sys.weatherSky
-                  elide: Text.ElideRight
-                  color: cc.ink
-                  font.family: cc.ds.fontUi
-                  font.pixelSize: 13
-                }
-
-                Text {
-                  width: parent.width
-                  textFormat: Text.PlainText
-                  text: "Feels " + cc.sys.weatherFeels + " · Wind " + cc.sys.weatherWind + " · Humidity " + cc.sys.weatherHumidity
-                  elide: Text.ElideRight
-                  color: cc.ink2
-                  font.family: cc.ds.fontUi
-                  font.pixelSize: 11
-                }
-              }
-            }
-
-            Text {
-              visible: cc.sys.weatherTemp === ""
-              leftPadding: Style.space(8)
-              bottomPadding: Style.space(6)
-              textFormat: Text.PlainText
-              text: "Weather isn't available right now."
-              color: cc.ink2
-              font.family: cc.ds.fontUi
-              font.pixelSize: 12
-            }
-
-            SettingLabel { visible: cc.sys.cities.length > 0; text: "World clock" }
-
-            Repeater {
-              model: cc.sys.cities
-
-              Item {
-                id: cityRow
-                required property var modelData
-                readonly property var parts: String(cc.sys.cityTimes[modelData.zone] || "").split("|")
-                width: parent.width
-                height: Style.space(30)
-
-                Text {
-                  x: Style.space(8)
-                  anchors.verticalCenter: parent.verticalCenter
-                  textFormat: Text.PlainText
-                  text: cityRow.modelData.name
-                  color: cc.ink
-                  font.family: cc.ds.fontUi
-                  font.pixelSize: 13
-                }
-
-                Text {
-                  anchors.right: cityTime.left
-                  anchors.rightMargin: Style.space(10)
-                  anchors.verticalCenter: parent.verticalCenter
-                  textFormat: Text.PlainText
-                  text: cityRow.parts[1] || ""
-                  color: cc.ink3
-                  font.family: cc.ds.fontUi
-                  font.pixelSize: 11
-                }
-
-                Text {
-                  id: cityTime
-                  anchors.right: parent.right
-                  anchors.rightMargin: Style.space(8)
-                  anchors.verticalCenter: parent.verticalCenter
-                  textFormat: Text.PlainText
-                  text: cityRow.parts[0] || "—"
-                  color: cc.ink
-                  font.family: cc.ds.fontUi
-                  font.pixelSize: 13
-                  font.weight: Font.Medium
-                  font.features: { "tnum": 1 }
-                }
-              }
-            }
-          }
-        }
-
-
-        // ---- tools: small things kept a click away ------------------------------
-        Rectangle {
-          width: body.width
-          height: toolsGrid.implicitHeight + Style.space(12)
-          radius: cc.ds.rTile
-          color: cc.raised
-
-          Grid {
-            id: toolsGrid
-            x: Style.space(6)
-            y: Style.space(6)
-            width: parent.width - Style.space(12)
-            columns: 4
-            spacing: Style.space(4)
-
-            Repeater {
-              model: [
-                { glyph: "note", label: "JotDown", run: "omarchy-shell -q shell toggle arpitjalan.jotdown '{}'" },
-                { glyph: "clipboard", label: "Clipboard", run: "omarchy-shell -q shell toggle omarchy.clipboard '{}'" },
-                { glyph: "sparkle", label: "Emoji", run: "omarchy-shell -q shell toggle omarchy.emojis '{}'" },
-                { glyph: "bell", label: "Alerts", run: "omarchy-shell -q notifications togglePanel" },
-                { glyph: "camera", label: "Screenshot", run: "omarchy-capture-screenshot" },
-                { glyph: "record", label: "Record", run: "omarchy-shell -q shell summon omarchy.menu '{\"menu\":\"trigger.capture.screenrecord\"}'" },
-                { glyph: "palette", label: "Theme", run: "omarchy-shell -q shell summon omarchy.image-picker '{\"source\":\"themes\"}'" },
-                { glyph: "image", label: "Wallpaper", run: "b=$(omarchy-theme-bg-switcher); [[ -n $b ]] && omarchy-theme-bg-set \"$b\"" }
-              ]
-
-              Rectangle {
-                id: tool
-                required property var modelData
-                width: (toolsGrid.width - 3 * toolsGrid.spacing) / 4
-                height: Style.space(58)
-                radius: cc.ds.rRow
-                color: toolHover.hovered ? cc.raised2 : "transparent"
-
-                Column {
-                  anchors.centerIn: parent
-                  width: parent.width - Style.space(6)
-                  spacing: Style.space(6)
-
-                  SumiIcon { anchors.horizontalCenter: parent.horizontalCenter; name: tool.modelData.glyph; size: 18; color: cc.ink }
-
-                  Text {
-                    width: parent.width
-                    horizontalAlignment: Text.AlignHCenter
-                    textFormat: Text.PlainText
-                    text: tool.modelData.label
-                    elide: Text.ElideRight
-                    color: cc.ink2
-                    font.family: cc.ds.fontUi
-                    font.pixelSize: 11
-                  }
-                }
-
-                HoverHandler { id: toolHover; cursorShape: Qt.PointingHandCursor }
-                TapHandler {
-                  onTapped: {
-                    cc.host.closeControlCenter()
-                    Util.execDetached(tool.modelData.run)
-                  }
-                }
-              }
-            }
-          }
-        }
 
         // ---- battery, lock, power ------------------------------------------------
         // The battery flows out over lock and power, then opens to its modes.
@@ -1585,8 +1388,9 @@ PanelWindow {
     property var net: ({})
     readonly property bool joining: cc.sys.joining === net.ssid
     readonly property bool failed: cc.sys.joinErrorSsid === net.ssid && cc.sys.joinError !== ""
-    property bool asking: false
-    property bool menuOpen: false
+    readonly property bool asking: cc.openNetwork === net.ssid && !net.inUse && !net.known && net.secure === true
+    readonly property bool menuOpen: cc.openNetwork === net.ssid && (net.inUse === true || net.known === true)
+    onAskingChanged: if (!asking) password.text = ""
 
     width: parent ? parent.width : 0
 
@@ -1655,8 +1459,11 @@ PanelWindow {
       TapHandler {
         onTapped: {
           if (nrow.joining) return
-          if (nrow.net.inUse || nrow.net.known) { nrow.menuOpen = !nrow.menuOpen; return }
-          if (nrow.net.secure) { nrow.asking = !nrow.asking; if (nrow.asking) password.forceActiveFocus(); return }
+          if (nrow.net.inUse || nrow.net.known || nrow.net.secure) {
+            cc.openNetwork = nrow.asking || nrow.menuOpen ? "" : nrow.net.ssid
+            if (nrow.asking) password.forceActiveFocus()
+            return
+          }
           cc.sys.join(nrow.net, "")
         }
       }
@@ -1674,19 +1481,19 @@ PanelWindow {
         visible: !nrow.net.inUse
         label: "Join"
         primary: true
-        onClicked: { nrow.menuOpen = false; cc.sys.join(nrow.net, "") }
+        onClicked: { cc.openNetwork = ""; cc.sys.join(nrow.net, "") }
       }
       TextButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: nrow.net.inUse === true
         label: "Disconnect"
-        onClicked: { nrow.menuOpen = false; cc.sys.leave(nrow.net) }
+        onClicked: { cc.openNetwork = ""; cc.sys.leave(nrow.net) }
       }
       TextButton {
         anchors.verticalCenter: parent.verticalCenter
         visible: nrow.net.known === true
         label: "Forget"
-        onClicked: { nrow.menuOpen = false; cc.sys.forget(nrow.net) }
+        onClicked: { cc.openNetwork = ""; cc.sys.forget(nrow.net) }
       }
     }
 
@@ -1698,7 +1505,10 @@ PanelWindow {
 
       Rectangle {
         id: field
-        x: Style.space(33)
+        // Both edges anchored: with only x and a right anchor the field has
+        // no width, so it can't be seen or clicked.
+        anchors.left: parent.left
+        anchors.leftMargin: Style.space(33)
         anchors.right: joinButton.left
         anchors.rightMargin: Style.space(6)
         anchors.verticalCenter: parent.verticalCenter
@@ -1721,7 +1531,7 @@ PanelWindow {
           font.family: cc.ds.fontUi
           font.pixelSize: 13
           Keys.onReturnPressed: joinButton.clicked()
-          Keys.onEscapePressed: { nrow.asking = false; text = "" }
+          Keys.onEscapePressed: { cc.openNetwork = ""; text = "" }
 
           Text {
             anchors.verticalCenter: parent.verticalCenter
@@ -1742,10 +1552,11 @@ PanelWindow {
         label: nrow.joining ? "Joining…" : "Join"
         primary: true
         onClicked: {
-          if (password.text.length === 0 || nrow.joining) return
+          if (nrow.joining) return
+          if (password.text.length === 0) { password.forceActiveFocus(); return }
           cc.sys.join(nrow.net, password.text)
           password.text = ""
-          nrow.asking = false
+          cc.openNetwork = ""
         }
       }
     }

@@ -185,7 +185,7 @@ PanelWindow {
     { id: "dock", label: "Hide Dock", glyph: "dock_to_bottom",
       on: !!host.dock && host.dock.autohide,
       run: function() { Util.execDetached("omarchy-dock autohide toggle") } }
-  ]
+  ].filter(function(t) { return t.id !== "dock" || ctl.host.dockEnabled !== false })
 
   readonly property var actions: [
     { id: "theme", label: "Theme", glyph: "palette",

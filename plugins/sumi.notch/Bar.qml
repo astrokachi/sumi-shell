@@ -63,6 +63,10 @@ Item {
   property string look: "glassy"
   readonly property bool transparent: look === "none"
   readonly property bool glassy: look === "glassy"
+  // The fill behind the control center, launcher and Omarchy menu, so they
+  // match the bar: solid when it is solid, frosted when it is frosted. A clear
+  // bar still gets frosted panels, or their text would sit on the wallpaper.
+  readonly property color panelBackground: glassy || transparent ? glassBackground : background
   property bool foregroundAnimationEnabled: true
   property bool centerSectionRevealHeld: false
   property bool centerHoverRevealSuppressed: false
@@ -133,6 +137,9 @@ Item {
   property string customizeScreen: ""
   property string controlTab: "quick"
   readonly property var dock: dockModel
+  // bar.notch.dock = false in shell.json drops the dock windows entirely. The
+  // dock model stays: the launcher and app library read apps and pins from it.
+  readonly property bool dockEnabled: notchConfig.dock !== false
   property var widgetHosts: []
   property string glassSyncedLook: ""
 
@@ -616,7 +623,7 @@ Item {
   DockModel { id: dockModel; appIconStyle: root.appIconStyle }
 
   Variants {
-    model: Quickshell.screens
+    model: root.dockEnabled ? Quickshell.screens : []
 
     DockWindow {
       host: root

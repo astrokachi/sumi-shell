@@ -131,7 +131,9 @@ Item {
     function ping(): string { return "ok" }
   }
 
-  OverlayWindow {
+  // Sumi.ScaledOverlayWindow, not qs.Ui's OverlayWindow, which stays invisible
+  // while the shell is drawn at 1.25x (see that file).
+  Sumi.ScaledOverlayWindow {
     id: panel
     shown: root.opened
     shownKeyboardFocus: WlrKeyboardFocus.None

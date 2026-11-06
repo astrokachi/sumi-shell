@@ -267,7 +267,7 @@ QtObject {
   property real brightness: 0.5
   property bool brightnessAvailable: true
   readonly property string brightnessMonitor: Hyprland.focusedMonitor ? Hyprland.focusedMonitor.name : ""
-  onBrightnessMonitorChanged: if (active) refreshBrightness()
+  onBrightnessMonitorChanged: if (active) { refreshBrightness(); refreshDisplays() }
 
   function brightnessCommand(extra) {
     var command = ["omarchy-brightness-display", "--no-osd"]
@@ -291,6 +291,17 @@ QtObject {
     if (brightnessProbe.running) return
     brightnessProbe.command = brightnessCommand([])
     brightnessProbe.running = true
+  }
+
+  // The brightness keys only tell the OSD, and the backlight's sysfs file
+  // raises no change events, so re-read it while the control center is open
+  // to keep the slider live, as the volume one is. The probe skips a tick
+  // while the last one is still running (DDC is slow) or a drag is applying.
+  property Timer brightnessPoll: Timer {
+    interval: 250
+    repeat: true
+    running: state.active && state.brightnessAvailable
+    onTriggered: state.refreshBrightness()
   }
 
   // Applied a moment after the last change, one command at a time: DDC is
@@ -592,7 +603,7 @@ QtObject {
   property Timer clockPoll: Timer {
     interval: 30000
     repeat: true
-    running: state.active
+    running: false  // clocks panel removed from the control center
     triggeredOnStart: true
     onTriggered: state.refreshClocks()
   }
@@ -644,6 +655,22 @@ QtObject {
   property var monitors: []
   property real scale: 1
   property int textSize: 12
+
+  // Follows Hyprland's focus live; the probe's own focused flag is only as
+  // fresh as the last read.
+  readonly property var focusedMonitor: {
+    var name = brightnessMonitor
+    return monitors.filter(function(m) { return name !== "" ? m.name === name : m.focused })[0] || null
+  }
+  onFocusedMonitorChanged: if (focusedMonitor) scale = focusedMonitor.scale
+
+  // A screen plugged in or out changes the list itself.
+  property Connections monitorEvents: Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (/^monitor(added|removed)/.test(event.name)) state.displaySettle.restart()
+    }
+  }
 
   property Process displayProbe: Process {
     command: ["bash", "-c", "hyprctl monitors all -j; echo; echo \"text $(omarchy-display-text-size 2>/dev/null | sed -n 's/^text size: \\([0-9]*\\).*/\\1/p')\""]
@@ -782,6 +809,8 @@ QtObject {
             var limits = Array.isArray(a.limits) ? a.limits.filter(function(l) { return l && l.percent !== undefined }) : []
             var updated = Date.parse(a.updatedAt || "") || 0
             if (updated > newest) newest = updated
+            // Omarchy writes a record for every agent it knows; keep the ones in use.
+            if (!limits.length && !(Number(a.totalPrompts) > 0) && !(Number(a.activeDays) > 0)) continue
             out.push({ id: String(a.id || ""), name: String(a.name || a.id || "Agent"), tier: String(a.tierLabel || ""),
               ready: a.ready === true, limits: limits, prompts: Number(a.todayPrompts) || 0,
               tokens: Number(a.todayTotalTokens) || 0, status: String(a.usageStatusText || "") })
@@ -833,7 +862,5 @@ QtObject {
     refreshHotspot()
     readAgents()
     updateAgents(false)
-    refreshWeather()
-    refreshClocks()
   }
 }
